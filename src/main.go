@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/reujab/wallpaper"
+	// "github.com/reujab/wallpaper"
+	"fmt"
 )
 
 func main() {
@@ -10,9 +11,12 @@ func main() {
 	// 	panic(err)
 	// }
 
-	err := wallpaper.SetFromURL("https://source.unsplash.com/1600x900/?nature")
-	if err != nil {
-		panic(err)
-	}
+	// err := wallpaper.SetFromURL("https://source.unsplash.com/1600x900/?nature")
+	// if err != nil {
+	// 	panic(err)
+	// }
 
+	c := readConfig()
+
+	fmt.Println(c)
 }
