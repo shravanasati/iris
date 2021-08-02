@@ -12,13 +12,13 @@ do
         output_name+='.exe'
     fi
 
-    echo "Building executable for $GOOS/$GOARCH..."
+    echo "==> Building executable for $GOOS/$GOARCH..."
 
-    env GOOS=$GOOS GOARCH=$GOARCH go build -v -ldflags="-s -w" -o $output_name src/*
+    env GOOS=$GOOS GOARCH=$GOARCH go build -v -ldflags="-s -w" -o $output_name ./cmd/iris
     if [ $? -ne 0 ]; then
-        echo 'An error has occurred! Aborting the script execution...'
+        echo '==> An error has occurred! Aborting the script execution...'
         exit 1
     fi
 done
 
-echo "Executables built successfully!"
+echo "==> Executables built successfully!"

@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
+	"os"
 
 	"github.com/reujab/wallpaper"
 )
@@ -22,16 +23,22 @@ func UnsplashWallpaper(c *Configuration, resolution string) {
 	url := fmt.Sprintf("https://source.unsplash.com/%v/?%v", resolution, searchTerms)
 
 	if !c.SaveWallpaper {
-		err := wallpaper.SetFromURL(url)
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		f, e := downloadImage(url)
+		f, e := downloadImage(url, true)
 		if e != nil {
 			fmt.Println(e)
 		} else {
-			wallpaper.SetFromFile(f)
+			if se := wallpaper.SetFromFile(f); se != nil {
+				panic(se)
+			}
+		}
+	} else {
+		f, e := downloadImage(url, false)
+		if e != nil {
+			fmt.Println(e)
+		} else {
+			if se := wallpaper.SetFromFile(f); se != nil {
+				panic(se)
+			}
 		}
 	}
 }
@@ -64,6 +71,22 @@ func DirectoryWallpaper(c *Configuration) {
 		err := wallpaper.SetFromFile(contents[0])
 		if err != nil {
 			panic(err)
+		}
+	}
+}
+
+// ClearClutter deletes all the wallpapers present in ~/.iris/temp.
+func ClearClutter() {
+	tempContents, er := ioutil.ReadDir(filepath.Join(getIrisDir(), "temp"))
+	if er != nil {
+		fmt.Println(er)
+		panic("unable to get ~/.iris/temp contents")
+	}
+
+	for _, f := range tempContents {
+		if err := os.Remove(filepath.Join(getIrisDir(), "temp", f.Name())); err != nil {
+			fmt.Println(err)
+			panic("unable to delete " + f.Name())
 		}
 	}
 }

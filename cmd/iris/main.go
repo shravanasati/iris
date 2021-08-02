@@ -49,4 +49,5 @@ func main() {
 	}
 
 	fmt.Println(c)
+	internal.ClearClutter()
 }

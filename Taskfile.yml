@@ -1,0 +1,18 @@
+# https://taskfile.dev
+
+version: '3'
+
+
+tasks:
+
+  build:
+    cmds:
+      - ./scripts/build.sh
+
+  run:
+    cmds:
+      - go run ./cmd/iris
+
+  test:
+    cmds:
+      - go test -v ./...

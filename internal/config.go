@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"os/user"
+	"fmt"
 	"path/filepath"
 )
 
@@ -58,6 +59,13 @@ func getIrisDir() string {
 	_, err := os.Stat(wallpaperDir)
 	if os.IsNotExist(err) {
 		os.Mkdir(wallpaperDir, os.ModePerm)
+	}
+
+	tempDir := filepath.Join(dir, "temp")
+	_, err = os.Stat(tempDir)
+	if os.IsNotExist(err) {
+		fmt.Println("making temp dir")
+		os.Mkdir(tempDir, os.ModePerm)
 	}
 
 	return dir
