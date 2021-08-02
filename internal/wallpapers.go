@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/reujab/wallpaper"
 )
 
-func unsplashWallpaper(c *Configuration, resolution string) {
+func UnsplashWallpaper(c *Configuration, resolution string) {
 	searchTerms := ""
 	for i, v := range c.SearchTerms {
 		if i == len(c.SearchTerms)-1 {
@@ -52,7 +52,7 @@ func getValidWallpapers(c *Configuration) []string {
 	return contents
 }
 
-func directoryWallpaper(c *Configuration) {
+func DirectoryWallpaper(c *Configuration) {
 	contents := getValidWallpapers(c)
 
 	if c.SelectionType == "random" {

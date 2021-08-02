@@ -3,18 +3,19 @@ package main
 import (
 	"fmt"
 	"time"
+	"github.com/Shravan-1908/iris/internal"
 )
 
 func main() {
-	c := readConfig()
+	c := internal.ReadConfig()
 
 	useUnsplash := false
-	if c.WallpaperDirectory == "" || !checkFileExists(c.WallpaperDirectory) {
+	if c.WallpaperDirectory == "" || !internal.CheckFileExists(c.WallpaperDirectory) {
 		useUnsplash = true
 	}
 
 	resolution := c.Resolution
-	if !stringInSlice(resolution, supportedResolutions) {
+	if !internal.StringInSlice(resolution, internal.SupportedResolutions) {
 		resolution = "1600x900"
 	}
 
@@ -25,11 +26,11 @@ func main() {
 				duration = 5
 			}
 			for {
-				unsplashWallpaper(c, resolution)
+				internal.UnsplashWallpaper(c, resolution)
 				time.Sleep(time.Duration(duration * int(time.Minute)))
 			}
 		} else {
-			unsplashWallpaper(c, resolution)
+			internal.UnsplashWallpaper(c, resolution)
 		}
 
 	} else {
@@ -39,11 +40,11 @@ func main() {
 				duration = 5
 			}
 			for {
-				directoryWallpaper(c)
+				internal.DirectoryWallpaper(c)
 				time.Sleep(time.Duration(duration * int(time.Minute)))
 			}
 		} else {
-			directoryWallpaper(c)
+			internal.DirectoryWallpaper(c)
 		}
 	}
 

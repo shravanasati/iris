@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func stringInSlice(s string, slice []string) bool {
+func StringInSlice(s string, slice []string) bool {
 	for _, v := range slice {
 		if v == s {
 			return true
@@ -24,6 +24,11 @@ func randomChoice(slice []string) string {
 	rand.Seed(time.Now().UnixNano())
 
 	return slice[rand.Intn(len(slice))]
+}
+
+func CheckFileExists(filePath string) bool {
+	_, e := os.Stat(filePath)
+	return !os.IsNotExist(e)
 }
 
 func downloadImage(url string) (string, error) {

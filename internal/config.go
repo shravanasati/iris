@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"bufio"
@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	supportedResolutions = []string{"1024x768", "1600x900", "1920x1080", "3840x2160"}
+	SupportedResolutions = []string{"1024x768", "1600x900", "1920x1080", "3840x2160"}
 )
 
 type Configuration struct {
@@ -63,10 +63,7 @@ func getIrisDir() string {
 	return dir
 }
 
-func checkFileExists(filePath string) bool {
-	_, e := os.Stat(filePath)
-	return !os.IsNotExist(e)
-}
+
 
 func jsonifyConfig(config *Configuration) []byte {
 	byteArray, err := json.MarshalIndent(config, "", "    ")
@@ -76,12 +73,12 @@ func jsonifyConfig(config *Configuration) []byte {
 	return (byteArray)
 }
 
-func readConfig() *Configuration {
+func ReadConfig() *Configuration {
 	config := Configuration{}
 
 	configFilePath := filepath.Join(getIrisDir(), "config.json")
 
-	if !checkFileExists(configFilePath) {
+	if !CheckFileExists(configFilePath) {
 		defaultConfig := Configuration{
 			SearchTerms:             []string{"nature"},
 			Resolution:              "1600x900",
