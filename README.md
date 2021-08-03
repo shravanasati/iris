@@ -16,6 +16,13 @@ iris is a cross platform, easy to use and customizable wallpaper manager.
 
 ## Installation
 
+#### For Windows users:
+Open powershell **as Admin** and execute the following command:
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; (Invoke-WebRequest -Uri https://raw.githubusercontent.com/Shravan-1908/iris/master/scripts/windows_install.ps1 -UseBasicParsing).Content | powershell -
+```
+
 <br>
 
 ## Usage
