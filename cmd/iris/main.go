@@ -1,53 +1,58 @@
 package main
 
 import (
-	"fmt"
-	"time"
 	"github.com/Shravan-1908/iris/internal"
+	"strings"
+	"time"
 )
 
 func main() {
+	// * getting the configuration
 	c := internal.ReadConfig()
 
+	// * determining if to use unsplash or local images
 	useUnsplash := false
-	if c.WallpaperDirectory == "" || !internal.CheckFileExists(c.WallpaperDirectory) {
+	if strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckFileExists(c.WallpaperDirectory) {
 		useUnsplash = true
 	}
 
 	resolution := c.Resolution
 	if !internal.StringInSlice(resolution, internal.SupportedResolutions) {
-		resolution = "1600x900"
+		c.Resolution = "1600x900"
 	}
 
+	// * wallpapers via unsplash
 	if useUnsplash {
 		if c.ChangeWallpaper {
 			duration := c.ChangeWallpaperDuration
 			if duration <= 0 {
-				duration = 5
+				duration = 15
 			}
 			for {
-				internal.UnsplashWallpaper(c, resolution)
+				c.UnsplashWallpaper()
 				time.Sleep(time.Duration(duration * int(time.Minute)))
+				internal.ClearClutter()
 			}
 		} else {
-			internal.UnsplashWallpaper(c, resolution)
+			c.UnsplashWallpaper()
+			internal.ClearClutter()
 		}
 
+	// * wallpapers via local directory
 	} else {
-		if c.ChangeWallpaper {
-			duration := c.ChangeWallpaperDuration
-			if duration <= 0 {
-				duration = 5
-			}
-			for {
-				internal.DirectoryWallpaper(c)
-				time.Sleep(time.Duration(duration * int(time.Minute)))
-			}
-		} else {
-			internal.DirectoryWallpaper(c)
-		}
+		// if c.ChangeWallpaper {
+		// 	duration := c.ChangeWallpaperDuration
+		// 	if duration <= 0 {
+		// 		duration = 5
+		// 	}
+		// 	for {
+		// 		internal.DirectoryWallpaper(c)
+		// 		time.Sleep(time.Duration(duration * int(time.Minute)))
+		// 	}
+		// } else {
+		// 	internal.DirectoryWallpaper(c)
+		// }
+		c.DirectoryWallpaper()
 	}
 
-	fmt.Println(c)
-	internal.ClearClutter()
 }

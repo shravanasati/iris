@@ -3,14 +3,15 @@ package internal
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
-	"os"
+	"time"
 
 	"github.com/reujab/wallpaper"
 )
 
-func UnsplashWallpaper(c *Configuration, resolution string) {
+func (c *Configuration)UnsplashWallpaper() {
 	searchTerms := ""
 	for i, v := range c.SearchTerms {
 		if i == len(c.SearchTerms)-1 {
@@ -20,7 +21,7 @@ func UnsplashWallpaper(c *Configuration, resolution string) {
 		}
 	}
 
-	url := fmt.Sprintf("https://source.unsplash.com/%v/?%v", resolution, searchTerms)
+	url := fmt.Sprintf("https://source.unsplash.com/%v/?%v", c.Resolution, searchTerms)
 
 	if !c.SaveWallpaper {
 		f, e := downloadImage(url, true)
@@ -43,7 +44,7 @@ func UnsplashWallpaper(c *Configuration, resolution string) {
 	}
 }
 
-func getValidWallpapers(c *Configuration) []string {
+func (c *Configuration) getValidWallpapers() []string {
 	contents := []string{}
 	tempContents, er := ioutil.ReadDir(c.WallpaperDirectory)
 	if er != nil {
@@ -59,18 +60,47 @@ func getValidWallpapers(c *Configuration) []string {
 	return contents
 }
 
-func DirectoryWallpaper(c *Configuration) {
-	contents := getValidWallpapers(c)
+func (c *Configuration) DirectoryWallpaper() {
+	contents := c.getValidWallpapers()
 
 	if c.SelectionType == "random" {
-		err := wallpaper.SetFromFile(randomChoice(contents))
-		if err != nil {
-			panic(err)
+		if c.ChangeWallpaper {
+			if c.ChangeWallpaperDuration <= 0 {
+				c.ChangeWallpaperDuration = 15
+			}
+			for {
+				if err := wallpaper.SetFromFile(randomChoice(contents)); err != nil {
+					panic(err)
+				}
+				time.Sleep(time.Duration(c.ChangeWallpaperDuration) * time.Second)
+			}
+		} else {
+			if err := wallpaper.SetFromFile(randomChoice(contents)); err != nil {
+				panic(err)
+			}
 		}
+
 	} else {
-		err := wallpaper.SetFromFile(contents[0])
-		if err != nil {
-			panic(err)
+		if c.ChangeWallpaper {
+			if c.ChangeWallpaperDuration <= 0 {
+				c.ChangeWallpaperDuration = 15
+			}
+			for i := range c.getValidWallpapers() {
+				if i == len(contents)-1 {
+					i = 0
+				}
+
+				if err := wallpaper.SetFromFile(contents[i]); err != nil {
+					panic(err)
+				}
+
+				time.Sleep(time.Duration(c.ChangeWallpaperDuration) * time.Second)
+			}
+
+		} else {
+			if err := wallpaper.SetFromFile(contents[0]); err != nil {
+				panic(err)
+			}
 		}
 	}
 }
