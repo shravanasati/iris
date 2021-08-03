@@ -72,7 +72,7 @@ func (c *Configuration) DirectoryWallpaper() {
 				if err := wallpaper.SetFromFile(randomChoice(contents)); err != nil {
 					panic(err)
 				}
-				time.Sleep(time.Duration(c.ChangeWallpaperDuration) * time.Second)
+				time.Sleep(time.Duration(c.ChangeWallpaperDuration) * time.Minute)
 			}
 		} else {
 			if err := wallpaper.SetFromFile(randomChoice(contents)); err != nil {
@@ -94,7 +94,7 @@ func (c *Configuration) DirectoryWallpaper() {
 					panic(err)
 				}
 
-				time.Sleep(time.Duration(c.ChangeWallpaperDuration) * time.Second)
+				time.Sleep(time.Duration(c.ChangeWallpaperDuration) * time.Minute)
 			}
 
 		} else {
