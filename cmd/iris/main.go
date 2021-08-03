@@ -21,7 +21,7 @@ func main() {
 	commando.
 		SetExecutableName(NAME).
 		SetVersion(VERSION).
-		SetDescription("iris is a cross platform, easy to use and customizable wallpaper manager.")
+		SetDescription("iris is an easy to use and customizable wallpaper manager for windows.")
 
 	// root command
 	commando.
