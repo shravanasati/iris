@@ -1,58 +1,82 @@
 package main
 
 import (
-	"github.com/Shravan-1908/iris/internal"
+	"fmt"
 	"strings"
 	"time"
+
+	"github.com/Shravan-1908/iris/internal"
+	"github.com/thatisuday/commando"
+)
+
+const (
+	NAME    string = "iris"
+	VERSION string = "v0.1.0"
 )
 
 func main() {
-	// * getting the configuration
-	c := internal.ReadConfig()
+	fmt.Println(NAME, VERSION)
+	go internal.DeletePreviousInstallation()
 
-	// * determining if to use unsplash or local images
-	useUnsplash := false
-	if strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckFileExists(c.WallpaperDirectory) {
-		useUnsplash = true
-	}
+	commando.
+		SetExecutableName(NAME).
+		SetVersion(VERSION).
+		SetDescription("iris is a cross platform, easy to use and customizable wallpaper manager.")
 
-	resolution := c.Resolution
-	if !internal.StringInSlice(resolution, internal.SupportedResolutions) {
-		c.Resolution = "1600x900"
-	}
+	// root command
+	commando.
+		Register(nil).
+		SetShortDescription("Run iris").
+		SetDescription("Runs iris.").
+		SetAction(func(args map[string]commando.ArgValue, flags map[string]commando.FlagValue) {
 
-	// * wallpapers via unsplash
-	if useUnsplash {
-		if c.ChangeWallpaper {
-			duration := c.ChangeWallpaperDuration
-			if duration <= 0 {
-				duration = 15
+			// * getting the configuration
+			c := internal.ReadConfig()
+
+			// * determining if to use unsplash or local images
+			useUnsplash := false
+			if strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckFileExists(c.WallpaperDirectory) {
+				useUnsplash = true
 			}
-			for {
-				c.UnsplashWallpaper()
-				time.Sleep(time.Duration(duration * int(time.Minute)))
-				internal.ClearClutter()
-			}
-		} else {
-			c.UnsplashWallpaper()
-			internal.ClearClutter()
-		}
 
-	// * wallpapers via local directory
-	} else {
-		// if c.ChangeWallpaper {
-		// 	duration := c.ChangeWallpaperDuration
-		// 	if duration <= 0 {
-		// 		duration = 5
-		// 	}
-		// 	for {
-		// 		internal.DirectoryWallpaper(c)
-		// 		time.Sleep(time.Duration(duration * int(time.Minute)))
-		// 	}
-		// } else {
-		// 	internal.DirectoryWallpaper(c)
-		// }
-		c.DirectoryWallpaper()
-	}
+			resolution := c.Resolution
+			if !internal.StringInSlice(resolution, internal.SupportedResolutions) {
+				c.Resolution = "1600x900"
+			}
+
+			// * wallpapers via unsplash
+			if useUnsplash {
+				if c.ChangeWallpaper {
+					duration := c.ChangeWallpaperDuration
+					if duration <= 0 {
+						duration = 15
+					}
+					for {
+						c.UnsplashWallpaper()
+						time.Sleep(time.Duration(duration * int(time.Minute)))
+						internal.ClearClutter()
+					}
+				} else {
+					c.UnsplashWallpaper()
+					internal.ClearClutter()
+				}
+
+				// * wallpapers via local directory
+			} else {
+				c.DirectoryWallpaper()
+			}
+
+		})
+
+	// update command
+	commando.
+		Register("update").
+		SetShortDescription("Update iris").
+		SetDescription("Updates iris.").
+		SetAction(func(args map[string]commando.ArgValue, flags map[string]commando.FlagValue) {
+			internal.Update()
+		})
+
+	commando.Parse(nil)
 
 }

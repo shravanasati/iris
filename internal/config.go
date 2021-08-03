@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"os"
 	"os/user"
-	"fmt"
 	"path/filepath"
 )
 
@@ -64,14 +63,11 @@ func getIrisDir() string {
 	tempDir := filepath.Join(dir, "temp")
 	_, err = os.Stat(tempDir)
 	if os.IsNotExist(err) {
-		fmt.Println("making temp dir")
 		os.Mkdir(tempDir, os.ModePerm)
 	}
 
 	return dir
 }
-
-
 
 func jsonifyConfig(config *Configuration) []byte {
 	byteArray, err := json.MarshalIndent(config, "", "    ")

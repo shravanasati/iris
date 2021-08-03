@@ -17,3 +17,6 @@ bin/
 
 # Task
 .task/
+
+# VS Code
+.vscode/
