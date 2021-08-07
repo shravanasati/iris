@@ -38,6 +38,7 @@ This section shows how you can setup your development environment to contribute 
 - Clone it using Git (`git clone https://github.com/<YOUR USERNAME>iris.git`).
 - Create a new git branch (`git checkout -b "BRANCH NAME"`).
 - Install the project dependencies. (`go get ./...`)
+- Additionally, you may want to install [task](https://taskfile.dev), an easy to use alternative to make.
 - Make changes.
 - Stage and commit (`git add .` and `git commit -m "COMMIT MESSAGE"`).
 - Push it to your remote repository (`git push`).

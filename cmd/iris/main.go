@@ -70,9 +70,9 @@ func main() {
 
 	// update command
 	commando.
-		Register("update").
+		Register("up").
 		SetShortDescription("Update iris").
-		SetDescription("Updates iris.").
+		SetDescription("Updates iris to the latest version.").
 		SetAction(func(args map[string]commando.ArgValue, flags map[string]commando.FlagValue) {
 			internal.Update()
 		})

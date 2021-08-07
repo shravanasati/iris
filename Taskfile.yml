@@ -12,6 +12,10 @@ tasks:
   run:
     cmds:
       - go run ./cmd/iris
+  
+  up:
+    cmds:
+      - go run ./cmd/iris up
 
   test:
     cmds:
