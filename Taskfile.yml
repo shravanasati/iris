@@ -7,7 +7,7 @@ tasks:
 
   build:
     cmds:
-      - ./scripts/build.sh
+      - go build -v ./cmd/iris
 
   run:
     cmds:
