@@ -21,10 +21,10 @@ func Update() {
 	switch runtime.GOOS {
 	case "windows":
 		url = "https://github.com/Shravan-1908/iris/releases/latest/download/iris-windows-amd64.exe"
-	case "linux":
-		url = "https://github.com/Shravan-1908/iris/releases/latest/download/iris-linux-amd64"
-	case "darwin":
-		url = "https://github.com/Shravan-1908/iris/releases/latest/download/iris-darwin-amd64"
+	// case "linux":
+	// 	url = "https://github.com/Shravan-1908/iris/releases/latest/download/iris-linux-amd64"
+	// case "darwin":
+	// 	url = "https://github.com/Shravan-1908/iris/releases/latest/download/iris-darwin-amd64"
 	default:
 		fmt.Println("Your OS isn't supported by iris.")
 		return
