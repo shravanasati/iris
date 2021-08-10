@@ -5,13 +5,14 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
 	"github.com/reujab/wallpaper"
 )
 
-func (c *Configuration)UnsplashWallpaper() {
+func (c *Configuration) UnsplashWallpaper() {
 	searchTerms := ""
 	for i, v := range c.SearchTerms {
 		if i == len(c.SearchTerms)-1 {
@@ -85,7 +86,9 @@ func (c *Configuration) DirectoryWallpaper() {
 			if c.ChangeWallpaperDuration <= 0 {
 				c.ChangeWallpaperDuration = 15
 			}
-			for i := range c.getValidWallpapers() {
+			wallpapers := c.getValidWallpapers()
+			sort.Strings(wallpapers)
+			for i := range wallpapers {
 				if i == len(contents)-1 {
 					i = 0
 				}

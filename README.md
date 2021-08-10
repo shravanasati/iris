@@ -8,16 +8,33 @@ iris is an easy to use and customizable wallpaper manager for windows.
 
 <br>
 
-## Features
+## 🌐 Table of Contents
+
+- [Features]()
+- [Installation]()
+- [Motivation]()
+- [Usage]()
+    * [Root command]()
+    * [Customization]()
+    * [Update]()
+- [Changelog]()
+- [Versioning]()
+- [Licensing]()
+- [Contribution]()
+
+
+<br>
+
+## ✨ Features
 - Customizable
 - Easy to use
-- Low memory overhead and almost 0% CPU usage
+- Low memory overhead and CPU usage
 - Support for remote wallpapers as well as local wallpapers
 - Free & Open Source
 
 <br>
 
-## Installation
+## ⚡️ Installation
 
 Open powershell **as Admin** and execute the following command:
 
@@ -25,14 +42,20 @@ Open powershell **as Admin** and execute the following command:
 Set-ExecutionPolicy Bypass -Scope Process -Force; (Invoke-WebRequest -Uri https://raw.githubusercontent.com/Shravan-1908/iris/master/scripts/windows_install.ps1 -UseBasicParsing).Content | powershell -
 ```
 
+This installation script will automatically add iris to PATH and to startup applications, so whenever the PC is booted, iris will be launched.
+
 <br>
 
-## Motivation
+## 💫 Motivation
 I wanted a wallpaper manager which gave a bing wallpaper + nitrogen like interface, good wallpapers and customizability with a bunch of features.
 
 <br>
 
-## Usage
+## 💡 Usage
+
+### Root command
+
+Simply calling `iris` without any flags or arguments from the terminal would launch iris and it will change the desktop wallpaper according to the set configuration.
 
 ### Customization
 
@@ -72,7 +95,7 @@ All configuration fields are pretty self explanatory, still I'd like to describe
 
 - Selection type: If to use wallpapers from the local system, then what should be the selection type: random or sorted.
 
-- Save wallpaper: Boolean value for whether to save the unsplash wallpapers or delete them after usage. If this is set to true, then the wallpapers will be stored in `~/.iris/wallpapers`.
+- Save wallpaper: Boolean value for whether to save the unsplash wallpapers or delete them after usage. If this is set to true, then the wallpapers will be stored in `~/.iris/wallpapers` directory.
 
 ### Update
 
@@ -84,7 +107,8 @@ This will update iris to its latest version.
 
 <br>
 
-## Changelog
+
+## ⏪ Changelog
 
 The changes made in the latest release, v0.1.0 are:
 
