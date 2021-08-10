@@ -7,7 +7,7 @@ tasks:
 
   build:
     cmds:
-      - go build -v -o bin/iris-windows-amd64.exe ./cmd/iris
+      - go build -v -o bin/iris-windows-amd64.exe -ldflags="-s -w" ./cmd/iris
 
   run:
     cmds:

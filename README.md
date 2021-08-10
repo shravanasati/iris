@@ -42,7 +42,7 @@ Open powershell **as Admin** and execute the following command:
 Set-ExecutionPolicy Bypass -Scope Process -Force; (Invoke-WebRequest -Uri https://raw.githubusercontent.com/Shravan-1908/iris/master/scripts/windows_install.ps1 -UseBasicParsing).Content | powershell -
 ```
 
-This installation script will automatically add iris to PATH and to startup applications, so whenever the PC is booted, iris will be launched.
+This installation script will automatically add iris to PATH and startup applications, so whenever the PC is booted, iris will be launched.
 
 <br>
 
