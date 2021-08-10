@@ -10,17 +10,17 @@ iris is an easy to use and customizable wallpaper manager for windows.
 
 ## 🌐 Table of Contents
 
-- [Features]()
-- [Installation]()
-- [Motivation]()
-- [Usage]()
-    * [Root command]()
-    * [Customization]()
-    * [Update]()
-- [Changelog]()
-- [Versioning]()
-- [Licensing]()
-- [Contribution]()
+- [Features](https://github.com/Shravan-1908/iris#-features)
+- [Installation](https://github.com/Shravan-1908/iris#%EF%B8%8F-installation)
+- [Motivation](https://github.com/Shravan-1908/iris#-motivation)
+- [Usage](https://github.com/Shravan-1908/iris#-usage)
+    * [Root command](https://github.com/Shravan-1908/iris#root-command)
+    * [Customization](https://github.com/Shravan-1908/iris#customization)
+    * [Update](https://github.com/Shravan-1908/iris#update)
+- [Changelog](https://github.com/Shravan-1908/iris#-changelog)
+- [Versioning](https://github.com/Shravan-1908/iris#-versioning)
+- [Licensing](https://github.com/Shravan-1908/iris#-license)
+- [Contribution](https://github.com/Shravan-1908/iris#-contribution)
 
 
 <br>
