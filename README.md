@@ -4,7 +4,7 @@
 	<img src="assets/gopher.png" height="300px">
 </p>
 
-iris is an easy to use and customizable wallpaper manager for windows.
+<center> iris is an easy to use and customizable wallpaper manager for windows. </center>
 
 <br>
 
