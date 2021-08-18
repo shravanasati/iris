@@ -42,12 +42,12 @@ func downloadImage(url string, temp bool) (string, error) {
 	}
 
 
-	cacheDir := filepath.Join(getIrisDir(), "wallpapers")
+	tempDir := filepath.Join(getIrisDir(), "wallpapers")
 	if temp {
-		cacheDir = filepath.Join(getIrisDir(), "temp")
+		tempDir = filepath.Join(getIrisDir(), "temp")
 	}
 
-	file, err := os.Create(filepath.Join(cacheDir, time.Now().Format("02-01-2006 15-04-05" + ".jpg")))
+	file, err := os.Create(filepath.Join(tempDir, time.Now().Format("02-01-2006 15-04-05" + ".jpg")))
 	if err != nil {
 		return "", err
 	}
