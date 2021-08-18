@@ -4,13 +4,29 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
 	"time"
+	"runtime"
 
 	"github.com/reujab/wallpaper"
 )
+
+// setWallpaper sets the wallpaper to the given file according to the OS.
+func setWallpaper(filename string) error {
+	switch runtime.GOOS {
+	case "windows":
+		return wallpaper.SetFromFile(filename)
+	case "linux":
+		cmd := exec.Command("feh", "--bg-scale", filename)
+		return cmd.Run()
+	default:
+		return fmt.Errorf("unsupported platform")
+	}
+}
+
 
 func (c *Configuration) UnsplashWallpaper() {
 	searchTerms := ""
@@ -29,7 +45,7 @@ func (c *Configuration) UnsplashWallpaper() {
 		if e != nil {
 			fmt.Println(e)
 		} else {
-			if se := wallpaper.SetFromFile(f); se != nil {
+			if se := setWallpaper(f); se != nil {
 				panic(se)
 			}
 		}
@@ -38,7 +54,7 @@ func (c *Configuration) UnsplashWallpaper() {
 		if e != nil {
 			fmt.Println(e)
 		} else {
-			if se := wallpaper.SetFromFile(f); se != nil {
+			if se := setWallpaper(f); se != nil {
 				panic(se)
 			}
 		}
@@ -70,13 +86,13 @@ func (c *Configuration) DirectoryWallpaper() {
 				c.ChangeWallpaperDuration = 15
 			}
 			for {
-				if err := wallpaper.SetFromFile(randomChoice(contents)); err != nil {
+				if err := setWallpaper(randomChoice(contents)); err != nil {
 					panic(err)
 				}
 				time.Sleep(time.Duration(c.ChangeWallpaperDuration) * time.Minute)
 			}
 		} else {
-			if err := wallpaper.SetFromFile(randomChoice(contents)); err != nil {
+			if err := setWallpaper(randomChoice(contents)); err != nil {
 				panic(err)
 			}
 		}
@@ -93,7 +109,7 @@ func (c *Configuration) DirectoryWallpaper() {
 					i = 0
 				}
 
-				if err := wallpaper.SetFromFile(contents[i]); err != nil {
+				if err := setWallpaper(contents[i]); err != nil {
 					panic(err)
 				}
 
@@ -101,7 +117,7 @@ func (c *Configuration) DirectoryWallpaper() {
 			}
 
 		} else {
-			if err := wallpaper.SetFromFile(contents[0]); err != nil {
+			if err := setWallpaper(contents[0]); err != nil {
 				panic(err)
 			}
 		}
