@@ -11,7 +11,7 @@ import (
 
 const (
 	NAME    string = "iris"
-	VERSION string = "v0.1.1"
+	VERSION string = "v0.2.0"
 )
 
 func main() {
@@ -61,7 +61,7 @@ func main() {
 					internal.ClearClutter()
 				}
 
-				// * wallpapers via local directory
+			// * wallpapers via local directory
 			} else {
 				c.DirectoryWallpaper()
 			}

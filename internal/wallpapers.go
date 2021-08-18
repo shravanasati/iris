@@ -79,6 +79,10 @@ func (c *Configuration) getValidWallpapers() []string {
 
 func (c *Configuration) DirectoryWallpaper() {
 	contents := c.getValidWallpapers()
+	if len(contents) == 0 {
+		fmt.Printf("No valid wallpapers found in the directory `%s`.\n", c.WallpaperDirectory)
+		return
+	}
 
 	if c.SelectionType == "random" {
 		if c.ChangeWallpaper {
