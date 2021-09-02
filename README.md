@@ -4,7 +4,7 @@
 	<img src="assets/gopher.png" height="300px">
 </p>
 
-iris is an easy to use and customizable wallpaper manager for windows.
+iris is an easy to use, cross platform and customizable wallpaper manager.
 
 <br>
 
@@ -26,6 +26,7 @@ iris is an easy to use and customizable wallpaper manager for windows.
 <br>
 
 ## ✨ Features
+- Cross platform (Windows and Linux)
 - Customizable
 - Easy to use
 - Low memory overhead and CPU usage

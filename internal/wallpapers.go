@@ -22,12 +22,15 @@ func setWallpaper(filename string) error {
 	case "linux":
 		cmd := exec.Command("feh", "--bg-scale", filename)
 		return cmd.Run()
+	case "darwin":
+		cmd := exec.Command("osascript", "-e", "tell application \"Finder\" to set desktop picture to POSIX file " + filename)
+		return cmd.Run()
 	default:
 		return fmt.Errorf("unsupported platform")
 	}
 }
 
-
+// UnsplashWallpaper changes the wallpaper using unsplash.
 func (c *Configuration) UnsplashWallpaper() {
 	searchTerms := ""
 	for i, v := range c.SearchTerms {
