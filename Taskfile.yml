@@ -13,16 +13,15 @@ tasks:
       - echo "=> Building Linux executable..."
       - GOOS=linux GOARCH=amd64 go build -v -o bin/iris-linux-amd64 -ldflags="-s -w" ./cmd/iris
 
+      - echo "=> Building Mac executable..."
+      - GOOS=darwin GOARCH=amd64 go build -v -o bin/iris-darwin-amd64 -ldflags="-s -w" ./cmd/iris
+
       - echo "=> Executables built successfully!"
 
   run:
     cmds:
       - go run ./cmd/iris
   
-  run-up:
-    cmds:
-      - go run ./cmd/iris up
-
   test:
     cmds:
       - go test -v ./...
