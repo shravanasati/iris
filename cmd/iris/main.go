@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -17,6 +18,12 @@ const (
 func main() {
 	fmt.Println(NAME, VERSION)
 	go internal.DeletePreviousInstallation()
+	defer func ()  {
+		if err := recover(); err != nil {
+			fmt.Printf("The app has got a fatal error, and it cannot proceed further.\n Please file a bug report at https://github.com/Shravan-1908/issues/new/choose, with the following error message. \n```\n%s\n```", err)
+		}
+		os.Exit(1)
+	}()
 
 	commando.
 		SetExecutableName(NAME).

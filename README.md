@@ -26,7 +26,7 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 <br>
 
 ## ✨ Features
-- Cross platform (Windows and Linux)
+- Cross platform
 - Customizable
 - Easy to use
 - Low memory overhead and CPU usage

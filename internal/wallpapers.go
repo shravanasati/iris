@@ -49,7 +49,8 @@ func (c *Configuration) UnsplashWallpaper() {
 			fmt.Println(e)
 		} else {
 			if se := setWallpaper(f); se != nil {
-				panic(se)
+				fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
+				os.Exit(1)
 			}
 		}
 	} else {
@@ -58,7 +59,8 @@ func (c *Configuration) UnsplashWallpaper() {
 			fmt.Println(e)
 		} else {
 			if se := setWallpaper(f); se != nil {
-				panic(se)
+				fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
+				os.Exit(1)
 			}
 		}
 	}
@@ -72,7 +74,12 @@ func (c *Configuration) getValidWallpapers() []string {
 	}
 
 	for _, f := range tempContents {
-		if strings.HasSuffix(f.Name(), ".png") || strings.HasSuffix(f.Name(), "jpg") || strings.HasSuffix(f.Name(), "jpeg") || strings.HasSuffix(f.Name(), "jfif") {
+		splitted := strings.Split(f.Name(), ".")
+		if len(splitted) == 0 {
+			continue
+		}
+		ext := splitted[len(splitted) - 1]
+		if StringInSlice(ext, []string{".png", ".jpg", ".jpeg", ".jfif"}) {
 			contents = append(contents, filepath.Join(c.WallpaperDirectory, f.Name()))
 		}
 	}
@@ -94,13 +101,15 @@ func (c *Configuration) DirectoryWallpaper() {
 			}
 			for {
 				if err := setWallpaper(randomChoice(contents)); err != nil {
-					panic(err)
+					fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
+					os.Exit(1)
 				}
 				time.Sleep(time.Duration(c.ChangeWallpaperDuration) * time.Minute)
 			}
 		} else {
 			if err := setWallpaper(randomChoice(contents)); err != nil {
-				panic(err)
+				fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
+				os.Exit(1)
 			}
 		}
 
@@ -117,7 +126,8 @@ func (c *Configuration) DirectoryWallpaper() {
 				}
 
 				if err := setWallpaper(contents[i]); err != nil {
-					panic(err)
+					fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
+					os.Exit(1)
 				}
 
 				time.Sleep(time.Duration(c.ChangeWallpaperDuration) * time.Minute)
@@ -125,7 +135,8 @@ func (c *Configuration) DirectoryWallpaper() {
 
 		} else {
 			if err := setWallpaper(contents[0]); err != nil {
-				panic(err)
+				fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
+				os.Exit(1)
 			}
 		}
 	}
