@@ -7,28 +7,31 @@ The following is a set of guidelines for contributing to *iris*, which is hosted
 
 ## Project Structure
 ```
+├── .github
+|  └── ISSUE_TEMPLATE
+|     ├── bug_report.md
+|     ├── custom.md
+|     └── feature_request.md
 ├── .gitignore
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── LICENSE
 ├── README.md
 ├── Taskfile.yml
-├── cmd                      # main cli code
+├── assets
+|  └── gopher.png
+├── cmd
 |  └── iris
 |     └── main.go
 ├── go.mod
 ├── go.sum
-├── internal                 # internal/core code
+├── internal
 |  ├── config.go
 |  ├── init.go
-|  ├── update.go
 |  ├── utils.go
 |  └── wallpapers.go
-└── scripts                  # build and installation scripts 
-   ├── build.sh
-   ├── linux_install.sh
-   ├── macos_install.sh
-   └── windows_install.ps1
+└── scripts
+   └── windows_install.ps11
 ```
 
 ## Setup Development Environment

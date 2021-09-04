@@ -142,8 +142,8 @@ func (c *Configuration) DirectoryWallpaper() {
 	}
 }
 
-// ClearClutter deletes all the wallpapers present in ~/.iris/temp.
-func ClearClutter() {
+// ClearTemp deletes all the wallpapers present in ~/.iris/temp.
+func ClearTemp() {
 	tempContents, er := ioutil.ReadDir(filepath.Join(getIrisDir(), "temp"))
 	if er != nil {
 		fmt.Println(er)

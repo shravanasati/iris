@@ -16,7 +16,6 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 - [Usage](https://github.com/Shravan-1908/iris#-usage)
     * [Root command](https://github.com/Shravan-1908/iris#root-command)
     * [Customization](https://github.com/Shravan-1908/iris#customization)
-    * [Update](https://github.com/Shravan-1908/iris#update)
 - [Changelog](https://github.com/Shravan-1908/iris#-changelog)
 - [Versioning](https://github.com/Shravan-1908/iris#-versioning)
 - [Licensing](https://github.com/Shravan-1908/iris#-license)
@@ -56,7 +55,7 @@ I wanted a wallpaper manager which gave a bing wallpaper + nitrogen like interfa
 
 ### Root command
 
-Simply calling `iris` without any flags or arguments from the terminal would launch iris and it will change the desktop wallpaper according to the set configuration.
+Simply calling `iris` without any flags and arguments from the terminal would launch iris and it will change the desktop wallpaper according to the set configuration.
 
 ### Customization
 
@@ -98,15 +97,6 @@ All configuration fields are pretty self explanatory, still I'd like to describe
 
 - Save wallpaper: Boolean value for whether to save the unsplash wallpapers or delete them after usage. If this is set to true, then the wallpapers will be stored in `~/.iris/wallpapers` directory.
 
-### Update
-
-To update iris, run
-```
-iris up
-```
-This will update iris to its latest version.
-
-<br>
 
 
 ## ⏪ Changelog

@@ -17,12 +17,12 @@ const (
 
 func main() {
 	fmt.Println(NAME, VERSION)
-	go internal.DeletePreviousInstallation()
+
 	defer func ()  {
 		if err := recover(); err != nil {
 			fmt.Printf("The app has got a fatal error, and it cannot proceed further.\n Please file a bug report at https://github.com/Shravan-1908/issues/new/choose, with the following error message. \n```\n%s\n```", err)
+			os.Exit(1)
 		}
-		os.Exit(1)
 	}()
 
 	commando.
@@ -60,12 +60,12 @@ func main() {
 					}
 					for {
 						c.UnsplashWallpaper()
-						time.Sleep(time.Duration(duration * int(time.Minute)))
-						internal.ClearClutter()
+						time.Sleep(time.Duration(duration) * (time.Minute))
+						internal.ClearTemp()
 					}
 				} else {
 					c.UnsplashWallpaper()
-					internal.ClearClutter()
+					internal.ClearTemp()
 				}
 
 			// * wallpapers via local directory
@@ -75,14 +75,6 @@ func main() {
 
 		})
 
-	// update command
-	commando.
-		Register("up").
-		SetShortDescription("Update iris").
-		SetDescription("Updates iris to the latest version.").
-		SetAction(func(args map[string]commando.ArgValue, flags map[string]commando.FlagValue) {
-			internal.Update()
-		})
 
 	commando.Parse(nil)
 
