@@ -41,13 +41,12 @@ func downloadImage(url string, temp bool) (string, error) {
 		return "", errors.New("non-200 status code")
 	}
 
-
 	tempDir := filepath.Join(getIrisDir(), "wallpapers")
 	if temp {
 		tempDir = filepath.Join(getIrisDir(), "temp")
 	}
 
-	file, err := os.Create(filepath.Join(tempDir, time.Now().Format("02-01-2006 15-04-05" + ".jpg")))
+	file, err := os.Create(filepath.Join(tempDir, time.Now().Format("02-01-2006 15-04-05"+".jpg")))
 	if err != nil {
 		return "", err
 	}

@@ -6,13 +6,15 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 	"time"
-	"runtime"
 
 	"github.com/reujab/wallpaper"
 )
+
+var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
 
 // setWallpaper sets the wallpaper to the given file according to the OS.
 func setWallpaper(filename string) error {
@@ -23,7 +25,7 @@ func setWallpaper(filename string) error {
 		cmd := exec.Command("feh", "--bg-scale", filename)
 		return cmd.Run()
 	case "darwin":
-		cmd := exec.Command("osascript", "-e", "tell application \"Finder\" to set desktop picture to POSIX file " + filename)
+		cmd := exec.Command("osascript", "-e", "tell application \"Finder\" to set desktop picture to POSIX file "+filename)
 		return cmd.Run()
 	default:
 		return fmt.Errorf("unsupported platform")
@@ -78,8 +80,8 @@ func (c *Configuration) getValidWallpapers() []string {
 		if len(splitted) == 0 {
 			continue
 		}
-		ext := splitted[len(splitted) - 1]
-		if StringInSlice(ext, []string{".png", ".jpg", ".jpeg", ".jfif"}) {
+		ext := splitted[len(splitted)-1]
+		if StringInSlice(ext, validImageExtensions) {
 			contents = append(contents, filepath.Join(c.WallpaperDirectory, f.Name()))
 		}
 	}
