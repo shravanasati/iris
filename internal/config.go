@@ -3,9 +3,12 @@ package internal
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/user"
 	"path/filepath"
+
+	"github.com/olekukonko/tablewriter"
 )
 
 var (
@@ -20,6 +23,45 @@ type Configuration struct {
 	WallpaperDirectory      string   `json:"wallpaper_directory"`       // use wallpapers from a user specified directory instead of unsplash
 	SelectionType           string   `json:"selection_type"`            // directory wallpaper selection type, either sorted or random
 	SaveWallpaper           bool     `json:"save_wallpaper"`            // whether to save the used wallpapers or not
+}
+
+func (c *Configuration) WriteConfig() {
+	configFilePath := filepath.Join(getIrisDir(), "config.json")
+
+	configFile, fer := os.Create(configFilePath)
+	if fer != nil {
+		fmt.Println("Unable to write config due to following error:", fer)
+		os.Exit(1)
+	}
+	defer configFile.Close()
+
+	if _, wer := configFile.Write(jsonifyConfig(c)); wer != nil {
+		fmt.Println("Unable to write config due to following error:", wer)
+		os.Exit(1)
+	}
+}
+
+func (c *Configuration) Show() {
+	searchTerms := ""
+	for _, term := range c.SearchTerms {
+		searchTerms += term + " "
+	}
+
+	data := [][]string{
+		{"Search Terms", searchTerms},
+		{"Resolution", c.Resolution},
+		{"Change Wallpaper", fmt.Sprintf("%v", c.ChangeWallpaper)},
+		{"Change Wallpaper Duration", fmt.Sprintf("%v minute(s)", c.ChangeWallpaperDuration)},
+		{"Wallpaper Directory", c.WallpaperDirectory},
+		{"Selection Type", c.SelectionType},
+		{"Save Wallpaper", fmt.Sprintf("%v", c.SaveWallpaper)},
+	}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Option", "Value"})
+	table.AppendBulk(data)
+
+	table.Render()
 }
 
 // readFile reads the given file and returns the string content of the same.
@@ -93,14 +135,7 @@ func ReadConfig() *Configuration {
 			SaveWallpaper:           false,
 		}
 
-		configFile, fer := os.Create(configFilePath)
-		if fer != nil {
-			panic(fer)
-		}
-		defer configFile.Close()
-		if _, wer := configFile.Write(jsonifyConfig(&defaultConfig)); wer != nil {
-			panic(wer)
-		}
+		defaultConfig.WriteConfig()
 
 		return &defaultConfig
 	}
