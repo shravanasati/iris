@@ -82,3 +82,7 @@ Visit https://github.com/Shravan-1908/iris for more information.`,
 func Execute() {
 	cobra.CheckErr(rootCmd.Execute())
 }
+
+func init() {
+	cobra.MousetrapHelpText = ""
+}

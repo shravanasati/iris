@@ -25,17 +25,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List the iris config.",
-	Long: `View your iris configuration in a tabular format.`,
+	Long:  `View your iris configuration in a tabular format.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		config.Show()
 	},
 }
-
 
 func init() {
 	configCmd.AddCommand(listCmd)
