@@ -31,7 +31,7 @@ var listCmd = &cobra.Command{
 	Short: "List the iris config.",
 	Long:  `View your iris configuration in a tabular format.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		config.Show()
+		c.Show()
 	},
 }
 

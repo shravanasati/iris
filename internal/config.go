@@ -23,10 +23,11 @@ type Configuration struct {
 	WallpaperDirectory      string   `json:"wallpaper_directory"`       // use wallpapers from a user specified directory instead of unsplash
 	SelectionType           string   `json:"selection_type"`            // directory wallpaper selection type, either sorted or random
 	SaveWallpaper           bool     `json:"save_wallpaper"`            // whether to save the used wallpapers or not
+	SaveWallpaperDirectory  string   `json:"save_wallpaper_directory"`  // directory to save the used wallpapers
 }
 
 func (c *Configuration) WriteConfig() {
-	configFilePath := filepath.Join(getIrisDir(), "config.json")
+	configFilePath := filepath.Join(GetIrisDir(), "config.json")
 
 	configFile, fer := os.Create(configFilePath)
 	if fer != nil {
@@ -42,6 +43,7 @@ func (c *Configuration) WriteConfig() {
 }
 
 func (c *Configuration) Show() {
+	fmt.Println("show config", c)
 	searchTerms := ""
 	for _, term := range c.SearchTerms {
 		searchTerms += term + " "
@@ -55,6 +57,7 @@ func (c *Configuration) Show() {
 		{"Wallpaper Directory", c.WallpaperDirectory},
 		{"Selection Type", c.SelectionType},
 		{"Save Wallpaper", fmt.Sprintf("%v", c.SaveWallpaper)},
+		{"Save Wallpaper Directory", c.SaveWallpaperDirectory},
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
@@ -81,8 +84,8 @@ func readFile(file string) string {
 	return text
 }
 
-// getIrisDir returns the iris home directory, namely `~/.iris`. Also creates the directory if it doesnt exists.
-func getIrisDir() string {
+// GetIrisDir returns the iris home directory, namely `~/.iris`. Also creates the directory if it doesnt exists.
+func GetIrisDir() string {
 	usr, e := user.Current()
 	if e != nil {
 		panic(e)
@@ -122,17 +125,18 @@ func jsonifyConfig(config *Configuration) []byte {
 func ReadConfig() *Configuration {
 	config := Configuration{}
 
-	configFilePath := filepath.Join(getIrisDir(), "config.json")
+	configFilePath := filepath.Join(GetIrisDir(), "config.json")
 
 	if !CheckFileExists(configFilePath) {
 		defaultConfig := Configuration{
 			SearchTerms:             []string{"nature"},
-			Resolution:              "1600x900",
+			Resolution:              "1920x1080",
 			ChangeWallpaper:         false,
 			ChangeWallpaperDuration: -1,
 			WallpaperDirectory:      "",
 			SelectionType:           "random",
 			SaveWallpaper:           false,
+			SaveWallpaperDirectory:  filepath.Join(GetIrisDir(), "wallpapers"),
 		}
 
 		defaultConfig.WriteConfig()

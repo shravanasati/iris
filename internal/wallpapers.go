@@ -146,14 +146,14 @@ func (c *Configuration) DirectoryWallpaper() {
 
 // ClearTemp deletes all the wallpapers present in ~/.iris/temp.
 func ClearTemp() {
-	tempContents, er := ioutil.ReadDir(filepath.Join(getIrisDir(), "temp"))
+	tempContents, er := ioutil.ReadDir(filepath.Join(GetIrisDir(), "temp"))
 	if er != nil {
 		fmt.Println(er)
 		panic("unable to get ~/.iris/temp contents")
 	}
 
 	for _, f := range tempContents {
-		if err := os.Remove(filepath.Join(getIrisDir(), "temp", f.Name())); err != nil {
+		if err := os.Remove(filepath.Join(GetIrisDir(), "temp", f.Name())); err != nil {
 			fmt.Println(err)
 			panic("unable to delete " + f.Name())
 		}

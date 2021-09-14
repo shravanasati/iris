@@ -22,11 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"github.com/Shravan-1908/iris/internal"
 	"github.com/spf13/cobra"
 )
-
-var config = internal.ReadConfig()
 
 // configCmd represents the config command
 var configCmd = &cobra.Command{
@@ -35,29 +32,33 @@ var configCmd = &cobra.Command{
 	Long: `The config command is used to customize iris according to your needs. All configuration options are exposed as flags.
 	
 Example:
-$ iris config -c 
+$ iris config --save-wallpaper
+$ iris config --wallpaper-directory /home/user/Pictures/Wallpapers
+$ iris config list
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		config.WriteConfig()
+		c.WriteConfig()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(configCmd)
 
-	configCmd.Flags().BoolVarP(&config.ChangeWallpaper, "change-wallpaper", "c", config.ChangeWallpaper, "Whether to change wallpapers continuosly in the background.")
+	configCmd.Flags().BoolVarP(&c.ChangeWallpaper, "change-wallpaper", "c", c.ChangeWallpaper, "Whether to change wallpapers continuosly in the background.")
 
-	configCmd.Flags().IntVarP(&config.ChangeWallpaperDuration, "wallpaper-change-duration", "d", config.ChangeWallpaperDuration, "The duration between wallpaper changes, if to change them continuosly.")
+	configCmd.Flags().IntVarP(&c.ChangeWallpaperDuration, "wallpaper-change-duration", "d", c.ChangeWallpaperDuration, "The duration between wallpaper changes, if to change them continuosly.")
 
-	configCmd.Flags().BoolVarP(&config.SaveWallpaper, "save-wallpaper", "s", config.SaveWallpaper, "Whether to save the wallpaper to the local directory.")
+	configCmd.Flags().BoolVarP(&c.SaveWallpaper, "save-wallpaper", "s", c.SaveWallpaper, "Whether to save the wallpaper to the local directory.")
 
-	configCmd.Flags().StringVarP(&config.WallpaperDirectory, "wallpaper-directory", "w", config.WallpaperDirectory, "The local directory to get wallpapers from.")
+	configCmd.Flags().StringVarP(&c.WallpaperDirectory, "wallpaper-directory", "w", c.WallpaperDirectory, "The local directory to get wallpapers from.")
 
-	configCmd.Flags().StringVarP(&config.Resolution, "resolution", "r", config.Resolution, "The image resolution to use for unsplash wallpapers.")
+	configCmd.Flags().StringVarP(&c.SaveWallpaperDirectory, "save-wallpaper-directory", "u", c.SaveWallpaperDirectory, "The local directory to save wallpapers in.")
 
-	configCmd.Flags().StringVarP(&config.SelectionType, "selection-type", "t", config.SelectionType, "The selection type for choosing wallpapers from the local directory, either `random` or `sorted`.")
+	configCmd.Flags().StringVarP(&c.Resolution, "resolution", "r", c.Resolution, "The image resolution to use for unsplash wallpapers.")
 
-	configCmd.Flags().StringSliceVarP(&config.SearchTerms, "search-terms", "q", config.SearchTerms, "The search terms for unsplash wallpapers.")
+	configCmd.Flags().StringVarP(&c.SelectionType, "selection-type", "t", c.SelectionType, "The selection type for choosing wallpapers from the local directory, either `random` or `sorted`.")
+
+	configCmd.Flags().StringSliceVarP(&c.SearchTerms, "search-terms", "q", c.SearchTerms, "The search terms for unsplash wallpapers.")
 
 }

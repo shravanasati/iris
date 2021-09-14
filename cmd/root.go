@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -37,6 +38,10 @@ func realMain() {
 	useUnsplash := false
 	if strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckFileExists(c.WallpaperDirectory) {
 		useUnsplash = true
+	}
+
+	if strings.TrimSpace(c.SaveWallpaperDirectory) == "" || !internal.CheckFileExists(c.SaveWallpaperDirectory) {
+		c.SaveWallpaperDirectory = filepath.Join(internal.GetIrisDir(), "wallpapers")
 	}
 
 	resolution := c.Resolution
