@@ -52,13 +52,14 @@ func realMain() {
 	// * wallpapers via unsplash
 	if useUnsplash {
 		if c.ChangeWallpaper {
-			duration := c.ChangeWallpaperDuration
-			if duration <= 0 {
-				duration = 15
+			duration, e := time.ParseDuration(c.ChangeWallpaperDuration)
+
+			if e != nil {
+				duration = time.Minute * 5
 			}
 			for {
 				c.UnsplashWallpaper()
-				time.Sleep(time.Duration(duration) * (time.Minute))
+				time.Sleep(duration)
 				internal.ClearTemp()
 			}
 		} else {

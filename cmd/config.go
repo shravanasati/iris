@@ -47,7 +47,7 @@ func init() {
 
 	configCmd.Flags().BoolVarP(&c.ChangeWallpaper, "change-wallpaper", "c", c.ChangeWallpaper, "Whether to change wallpapers continuosly in the background.")
 
-	configCmd.Flags().IntVarP(&c.ChangeWallpaperDuration, "wallpaper-change-duration", "d", c.ChangeWallpaperDuration, "The duration between wallpaper changes, if to change them continuosly.")
+	configCmd.Flags().StringVarP(&c.ChangeWallpaperDuration, "wallpaper-change-duration", "d", c.ChangeWallpaperDuration, "The duration between wallpaper changes, if to change them continuosly.")
 
 	configCmd.Flags().BoolVarP(&c.SaveWallpaper, "save-wallpaper", "s", c.SaveWallpaper, "Whether to save the wallpaper to the local directory.")
 

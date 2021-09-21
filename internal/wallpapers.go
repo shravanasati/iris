@@ -98,15 +98,16 @@ func (c *Configuration) DirectoryWallpaper() {
 
 	if c.SelectionType == "random" {
 		if c.ChangeWallpaper {
-			if c.ChangeWallpaperDuration <= 0 {
-				c.ChangeWallpaperDuration = 15
+			duration, e := time.ParseDuration(c.ChangeWallpaperDuration)
+			if e != nil {
+				duration = time.Minute * 5
 			}
 			for {
 				if err := setWallpaper(randomChoice(contents)); err != nil {
 					fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
 					os.Exit(1)
 				}
-				time.Sleep(time.Duration(c.ChangeWallpaperDuration) * time.Minute)
+				time.Sleep(duration)
 			}
 		} else {
 			if err := setWallpaper(randomChoice(contents)); err != nil {
@@ -117,9 +118,11 @@ func (c *Configuration) DirectoryWallpaper() {
 
 	} else {
 		if c.ChangeWallpaper {
-			if c.ChangeWallpaperDuration <= 0 {
-				c.ChangeWallpaperDuration = 15
+			duration, e := time.ParseDuration(c.ChangeWallpaperDuration)
+			if e != nil {
+				duration = time.Minute * 5
 			}
+
 			wallpapers := c.getValidWallpapers()
 			sort.Strings(wallpapers)
 			for i := range wallpapers {
@@ -132,7 +135,7 @@ func (c *Configuration) DirectoryWallpaper() {
 					os.Exit(1)
 				}
 
-				time.Sleep(time.Duration(c.ChangeWallpaperDuration) * time.Minute)
+				time.Sleep(duration)
 			}
 
 		} else {
