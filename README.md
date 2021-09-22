@@ -61,20 +61,41 @@ Simply calling `iris` without any flags and arguments from the terminal would la
 
 iris uses [unsplash](https://source.unsplash.com) for fetching remote wallpapers. However, you can use your own collection of wallpapers too.
 
-You can customize iris to work as you wish by editing the `config.json` located in `~/.iris` folder. The first time you run iris, it automatically creates a `config.json` file with default configuration, which looks like this:
+When iris is ran for the first time, it automatically configures itself with sensible defaults.
 
-```json
-{
-    "search_terms": [
-        "nature"
-    ],
-    "resolution": "1600x900",
-    "change_wallpaper": false,
-    "change_wallpaper_duration": -1,
-    "wallpaper_directory": "",
-    "selection_type": "random",
-    "save_wallpaper": false
-}
+You can customize iris to work as you wish by using the `config` command.
+
+
+```
+$ iris config --help
+
+iris v0.2.0
+The config command is used to customize iris according to your needs. All configuration options are exposed as flags.
+
+Example:
+$ iris config --save-wallpaper
+$ iris config --wallpaper-directory /home/user/Pictures/Wallpapers
+$ iris config list
+
+Usage:
+  iris config [flags]
+  iris config [command]
+
+Available Commands:
+  list        List the iris config.
+
+Flags:
+  -c, --change-wallpaper                   Whether to change wallpapers continuosly in the background.
+  -h, --help                               help for config
+  -r, --resolution string                  The image resolution to use for unsplash wallpapers. (default "1920x1080")
+  -s, --save-wallpaper                     Whether to save the wallpaper to the local directory. (default true)
+  -u, --save-wallpaper-directory string    The local directory to save wallpapers in. (default "C:\\Users\\LENOVO\\.iris\\wallpapers")
+  -q, --search-terms strings               The search terms for unsplash wallpapers. (default [landscape])
+  -t, --selection-type random              The selection type for choosing wallpapers from the local directory, either random or `sorted`. (default "random")  
+  -d, --wallpaper-change-duration string   The duration between wallpaper changes, if to change them continuosly. (default "5m")
+  -w, --wallpaper-directory string         The local directory to get wallpapers from.
+
+Use "iris config [command] --help" for more information about a command.
 ```
 
 All configuration fields are pretty self explanatory, still I'd like to describe them all in brief.
@@ -89,21 +110,46 @@ All configuration fields are pretty self explanatory, still I'd like to describe
 
 - Change wallpaper: Boolean value for whether to continuously change wallpapers or not.
 
-- Change wallpaper duration: If to change wallpapers, then after how long. The duration value will be counted in minutes. Defaults to 15 mins if the change wallpaper property is set to true.
+- Change wallpaper duration: If to change wallpapers, then after how long. The duration value can be anything like `30s` `4m5s` `1h` `2h30m8s`.
 
 - Wallpaper directory: Specify your own wallpaper directory if you don't want iris to use unsplash.
 
 - Selection type: If to use wallpapers from the local system, then what should be the selection type: random or sorted.
 
-- Save wallpaper: Boolean value for whether to save the unsplash wallpapers or delete them after usage. If this is set to true, then the wallpapers will be stored in `~/.iris/wallpapers` directory.
+- Save wallpaper: Boolean value for whether to save the unsplash wallpapers or delete them after usage. If this is set to true, then the wallpapers will be stored in `~/.iris/wallpapers` directory by default, unless the following option is not altered.
 
+- Save wallpaper directory: Choose a directory to save wallpapers in. Defaults to `~/.iris/wallpapers`.
+
+
+You can also view your iris configuration using `iris config list` command.
+
+```
+$ iris config list
+
+iris v0.2.1
++---------------------------+----------------------------------+
+|          OPTION           |              VALUE               |
++---------------------------+----------------------------------+
+| Search Terms              | nature                           |
+| Resolution                | 1920x1080                        |
+| Change Wallpaper          | false                            |
+| Change Wallpaper Duration | 5m                               |
+| Wallpaper Directory       |                                  |
+| Selection Type            | random                           |
+| Save Wallpaper            | true                             |
+| Save Wallpaper Directory  |                                  |
++---------------------------+----------------------------------+
+```
 
 
 ## ⏪ Changelog
 
-The changes made in the latest release, v0.1.0 are:
+The changes made in the latest release, v0.2.0 are:
 
-- First release
+- Linux and Mac support
+- Shell completion scripts generation
+- Config command
+- Minor bug fixes
 
 <br>
 
