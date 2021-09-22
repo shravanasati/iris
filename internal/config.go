@@ -121,31 +121,40 @@ func jsonifyConfig(config *Configuration) []byte {
 	return (byteArray)
 }
 
+func getDefaultConfig() *Configuration {
+	defaultConfig := Configuration{
+		SearchTerms:             []string{"nature"},
+		Resolution:              "1920x1080",
+		ChangeWallpaper:         false,
+		ChangeWallpaperDuration: "5m",
+		WallpaperDirectory:      "",
+		SelectionType:           "random",
+		SaveWallpaper:           false,
+		SaveWallpaperDirectory:  filepath.Join(GetIrisDir(), "wallpapers"),
+	}
+
+	return &defaultConfig
+}
+
 func ReadConfig() *Configuration {
 	config := Configuration{}
 
 	configFilePath := filepath.Join(GetIrisDir(), "config.json")
 
 	if !CheckFileExists(configFilePath) {
-		defaultConfig := Configuration{
-			SearchTerms:             []string{"nature"},
-			Resolution:              "1920x1080",
-			ChangeWallpaper:         false,
-			ChangeWallpaperDuration: "5m",
-			WallpaperDirectory:      "",
-			SelectionType:           "random",
-			SaveWallpaper:           false,
-			SaveWallpaperDirectory:  filepath.Join(GetIrisDir(), "wallpapers"),
-		}
+		defaultConfig := getDefaultConfig()
 
 		defaultConfig.WriteConfig()
 
-		return &defaultConfig
+		return defaultConfig
 	}
 
 	configContent := readFile(configFilePath)
 	if e := json.Unmarshal([]byte(configContent), &config); e != nil {
-		panic(e)
+		fmt.Println(fmt.Println("Looks like the iris configuration is corrupted/broken, rewriting it with default values."))
+		defaultConfig := getDefaultConfig()
+		defaultConfig.WriteConfig()
+		return defaultConfig
 	}
 
 	return &config
