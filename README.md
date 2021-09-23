@@ -72,9 +72,13 @@ $ iris config --help
 iris v0.2.0
 The config command is used to customize iris according to your needs. All configuration options are exposed as flags.
 
-Example:
+Examples:
+
 $ iris config --save-wallpaper
 $ iris config --wallpaper-directory /home/user/Pictures/Wallpapers
+$ iris config --search-terms landscape,nature
+$ iris config --change-wallpaper=false  
+$ iris config --resolution 1920x1080
 $ iris config list
 
 Usage:
