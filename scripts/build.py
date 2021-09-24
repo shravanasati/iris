@@ -9,6 +9,9 @@ app_name = "iris"
 
 
 def init_folders() -> None:
+    """
+    Makes sure that the `temp` and `dist` folders exist.
+    """
     if not os.path.exists("./dist"):
         os.mkdir("./dist")
 
@@ -17,12 +20,17 @@ def init_folders() -> None:
 
 
 def pack(dir: str, platform: str) -> None:
+    """
+    Creates a tarball file for the given directory.
+    """
     shutil.copyfile("./README.md", f"{dir}/README.md")
     shutil.copyfile("./LICENSE", f"{dir}/LICENSE")
     shutil.copyfile("./CHANGELOG.md", f"{dir}/CHANGELOG.md")
     shutil.copyfile("./assets/gopher.png", f"{dir}/iris.png")
+
     build_os = platform.split("/")[0]
     build_arch = platform.split("/")[1]
+
     shutil.make_archive(f"dist/{app_name}_{build_os}_{build_arch}", "gztar", dir)
 
 
