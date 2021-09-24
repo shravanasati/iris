@@ -20,3 +20,7 @@ bin/
 
 # VS Code
 .vscode/
+
+# Build files
+temp/
+dist/
