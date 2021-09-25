@@ -9,6 +9,7 @@ import os
 APP_NAME = "iris"
 STRIP = True
 VERBOSE = False
+FORMAT = True
 
 
 def init_folders() -> None:
@@ -91,6 +92,8 @@ if __name__ == "__main__":
     ]
 
     init_folders()
+    if FORMAT:
+        run(shlex.split("go fmt ./..."), check=True)
 
     max_procs = cpu_count()
     print(f"==> Starting builds with {max_procs} processes.")
