@@ -11,14 +11,25 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 ## 🌐 Table of Contents
 
 - [Features](https://github.com/Shravan-1908/iris#-features)
+
 - [Installation](https://github.com/Shravan-1908/iris#%EF%B8%8F-installation)
+    * [Installation Scripts](https://github.com/Shravan-1908/iris/#installation-scripts)
+    * [Package Managers](https://github.com/Shravan-1908/iris/#package-managers)
+    * [Using Go compiler](https://github.com/Shravan-1908/iris/#using-go-compiler)
+    * [Build from source](https://github.com/Shravan-1908/iris/#build-from-source)
+
 - [Motivation](https://github.com/Shravan-1908/iris#-motivation)
+
 - [Usage](https://github.com/Shravan-1908/iris#-usage)
     * [Root command](https://github.com/Shravan-1908/iris#root-command)
     * [Customization](https://github.com/Shravan-1908/iris#customization)
+
 - [Changelog](https://github.com/Shravan-1908/iris#-changelog)
+
 - [Versioning](https://github.com/Shravan-1908/iris#-versioning)
+
 - [Licensing](https://github.com/Shravan-1908/iris#-license)
+
 - [Contribution](https://github.com/Shravan-1908/iris#-contribution)
 
 
@@ -48,7 +59,11 @@ This installation script will automatically add iris to PATH and startup applica
 
 ### Package Managers
 
-iris is available on various package managers.
+iris is available on various package managers across different operating systems.
+
+### GitHub Releases
+
+iris binaries for all operating systems are available on the [GitHub Releases](https://github.com/Shravan-1908/iris/releases/latest) tab. You can download them manually and place them on `PATH` in order to use them.
 
 ### Using Go compiler
 
