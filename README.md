@@ -36,6 +36,8 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 
 ## ⚡️ Installation
 
+### Installation Scripts
+
 Open powershell **as Admin** and execute the following command:
 
 ```powershell
@@ -43,6 +45,37 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; (Invoke-WebRequest -Uri https:
 ```
 
 This installation script will automatically add iris to PATH and startup applications, so whenever the PC is booted, iris will be launched.
+
+### Package Managers
+
+iris is available on various package managers.
+
+### Using Go compiler
+
+If you've Go compiler (v1.16 or above) installed on your system, you can install iris via the following command. 
+
+For Go v1.17:
+
+```
+go install github.com/Shravan-1908/iris@latest
+```
+
+For Go v1.16:
+
+```
+go get github.com/Shravan-1908/iris@latest
+```
+
+
+### Build from source
+
+You can alternatively build iris from source via the following commands:
+
+```
+git clone https://github.com/Shravan-1908/iris.git
+cd ./iris
+go build
+```
 
 <br>
 
