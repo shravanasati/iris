@@ -84,7 +84,7 @@ go get github.com/Shravan-1908/iris@latest
 
 ### Build from source
 
-You can alternatively build iris from source via the following commands:
+You can alternatively build iris from source via the following commands (again, requires go1.16 or above):
 
 ```
 git clone https://github.com/Shravan-1908/iris.git
