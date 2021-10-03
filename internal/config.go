@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"strings"
 
 	"github.com/olekukonko/tablewriter"
 )
@@ -43,10 +44,7 @@ func (c *Configuration) WriteConfig() {
 }
 
 func (c *Configuration) Show() {
-	searchTerms := ""
-	for _, term := range c.SearchTerms {
-		searchTerms += term + " "
-	}
+	searchTerms := strings.Join(c.SearchTerms, " ")
 
 	data := [][]string{
 		{"Search Terms", searchTerms},

@@ -32,23 +32,9 @@ func setWallpaper(filename string) error {
 	}
 }
 
-// getSearchTermsString returns a string of search terms separated by commas.
-func (c *Configuration) getSearchTermsString() string {
-	searchTerms := ""
-	for i, v := range c.SearchTerms {
-		if i == len(c.SearchTerms)-1 {
-			searchTerms += v
-		} else {
-			searchTerms += v + ","
-		}
-	}
-
-	return searchTerms
-}
-
 // UnsplashWallpaper changes the wallpaper using unsplash.
 func (c *Configuration) UnsplashWallpaper() {
-	searchTerms := c.getSearchTermsString()
+	searchTerms := strings.Join(c.SearchTerms, ",")
 
 	url := fmt.Sprintf("https://source.unsplash.com/%v/?%v", c.Resolution, searchTerms)
 
@@ -138,7 +124,7 @@ func (c *Configuration) DirectoryWallpaper() {
 						fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
 						os.Exit(1)
 					}
-	
+
 					time.Sleep(duration)
 				}
 			}
