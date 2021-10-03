@@ -1,4 +1,4 @@
-from subprocess import run
+from subprocess import run, CalledProcessError
 from typing import List
 from multiprocessing import Pool, cpu_count
 import shlex
@@ -43,35 +43,43 @@ def build(platform: str) -> None:
     """
     Calls the go compiler to build the application for the given platform, and the pack function.
     """
-    print(f"==> Building for {platform}.")
-    splitted = platform.split("/")
-    build_os = splitted[0]
-    build_arch = splitted[1]
+    try:
+        print(f"==> Building for {platform}.")
+        splitted = platform.split("/")
+        build_os = splitted[0]
+        build_arch = splitted[1]
 
-    output_dir = f"temp/{APP_NAME}_{build_os}_{build_arch}"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+        output_dir = f"temp/{APP_NAME}_{build_os}_{build_arch}"
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
 
-    executable_path = f"{output_dir}/{APP_NAME}"
-    if build_os == "windows":
-        executable_path += ".exe"
+        executable_path = f"{output_dir}/{APP_NAME}"
+        if build_os == "windows":
+            executable_path += ".exe"
 
-    os.environ["GOOS"] = build_os
-    os.environ["GOARCH"] = build_arch
+        os.environ["GOOS"] = build_os
+        os.environ["GOARCH"] = build_arch
 
-    run(
-        shlex.split(
-            "go build -o {} {} {}".format(
-                executable_path,
-                '-ldflags="-s -w"' if STRIP else "",
-                "-v" if VERBOSE else "",
-            )
-        ),
-        check=True,
-    )
+        run(
+            shlex.split(
+                "go build -o {} {} {}".format(
+                    executable_path,
+                    '-ldflags="-s -w"' if STRIP else "",
+                    "-v" if VERBOSE else "",
+                )
+            ),
+            check=True,
+        )
 
-    print(f"==> Packing for {platform}.")
-    pack(output_dir, platform)
+        print(f"==> Packing for {platform}.")
+        pack(output_dir, platform)
+
+    except CalledProcessError:
+        print(f"==> Failed to build for {platform}: The Go compiler returned an error.")
+
+    except Exception as e:
+        print(f"==> Failed to build for {platform}.")
+        print(e)
 
 
 def cleanup() -> None:
