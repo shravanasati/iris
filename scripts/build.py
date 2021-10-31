@@ -1,15 +1,28 @@
 from subprocess import run, CalledProcessError
-from typing import List
 from multiprocessing import Pool, cpu_count
 import shlex
 import shutil
 import os
+import json
 
-# build config
+# build config, would be altered by init_config()
 APP_NAME = "iris"
 STRIP = True
 VERBOSE = False
 FORMAT = True
+PLATFORMS: list[str] = []
+
+
+def init_config():
+    global APP_NAME, STRIP, VERBOSE, FORMAT, PLATFORMS
+    with open("./scripts/release.config.json") as f:
+        config = json.load(f)
+
+        APP_NAME = config["app_name"]
+        STRIP = config["strip_binaries"]
+        VERBOSE = config["verbose"]
+        FORMAT = config["format_code"]
+        PLATFORMS = config["platforms"]
 
 
 def init_folders() -> None:
@@ -36,7 +49,9 @@ def pack(dir: str, platform: str) -> None:
     build_os = splitted[0]
     build_arch = splitted[1]
 
-    shutil.make_archive(f"dist/{APP_NAME}_{build_os}_{build_arch}", "gztar", dir)
+    compression = "zip" if build_os == "windows" else "gztar"
+
+    shutil.make_archive(f"dist/{APP_NAME}_{build_os}_{build_arch}", compression, dir)
 
 
 def build(platform: str) -> None:
@@ -91,14 +106,8 @@ def cleanup() -> None:
 
 
 if __name__ == "__main__":
-    platforms: List[str] = [
-        "linux/amd64",
-        "windows/amd64",
-        "darwin/amd64",
-        "darwin/arm64",
-        "linux/arm64",
-    ]
-
+    print("==> Initialising folders, executing prebuild commands.")
+    init_config()
     init_folders()
     if FORMAT:
         run(shlex.split("go fmt ./..."), check=True)
@@ -107,6 +116,6 @@ if __name__ == "__main__":
     print(f"==> Starting builds with {max_procs} processes.")
 
     with Pool(processes=max_procs) as pool:
-        pool.map(build, platforms)
+        pool.map(build, PLATFORMS)
 
     cleanup()

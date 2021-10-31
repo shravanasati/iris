@@ -92,6 +92,12 @@ cd ./iris
 go build
 ```
 
+If you want to build iris in release mode (stripped binaries, compressed dsitribution and cross compilation), execute the following command. You can also control the release builds behavior using the [`release.config.json`](./scripts/release.config.json) file.
+
+```
+python ./scripts/build.py
+```
+
 <br>
 
 ## 💫 Motivation
