@@ -42,8 +42,8 @@ def pack(dir: str, platform: str) -> None:
     """
     shutil.copyfile("./README.md", f"{dir}/README.md")
     shutil.copyfile("./LICENSE.txt", f"{dir}/LICENSE.txt")
-    shutil.copyfile("./CHANGELOG.md", f"{dir}/CHANGELOG.md")
-    shutil.copyfile("./assets/gopher.png", f"{dir}/iris.png")
+    # shutil.copyfile("./CHANGELOG.md", f"{dir}/CHANGELOG.md")
+    shutil.copyfile("./assets/gopher.png", f"{dir}/icon.png")
 
     splitted = platform.split("/")
     build_os = splitted[0]
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         run(shlex.split("go fmt ./..."), check=True)
 
     max_procs = cpu_count()
-    print(f"==> Starting builds with {max_procs} processes.")
+    print(f"==> Starting builds with {max_procs} parallel processes.")
 
     with Pool(processes=max_procs) as pool:
         pool.map(build, PLATFORMS)
