@@ -43,7 +43,7 @@ def pack(dir: str, platform: str) -> None:
     shutil.copyfile("./README.md", f"{dir}/README.md")
     shutil.copyfile("./LICENSE.txt", f"{dir}/LICENSE.txt")
     # shutil.copyfile("./CHANGELOG.md", f"{dir}/CHANGELOG.md")
-    shutil.copyfile("./assets/gopher.png", f"{dir}/icon.png")
+    shutil.copyfile("./assets/icon.png", f"{dir}/icon.png")
 
     splitted = platform.split("/")
     build_os = splitted[0]
