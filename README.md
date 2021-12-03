@@ -61,6 +61,21 @@ This installation script will automatically add iris to PATH and startup applica
 
 iris is available on various package managers across different operating systems.
 
+iris is present in the AUR. If you're on an Arch based Linux distro,
+execute:
+
+```
+git clone https://aur.archlinux.org/iris-bin.git
+cd iris-bin
+makepkg -si
+```
+
+Or use any AUR helper like yay:
+```
+yay -S iris-bin
+```
+
+
 ### GitHub Releases
 
 iris binaries for all operating systems are available on the [GitHub Releases](https://github.com/Shravan-1908/iris/releases/latest) tab. You can download them manually and place them on `PATH` in order to use them.
