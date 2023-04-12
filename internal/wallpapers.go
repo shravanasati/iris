@@ -34,14 +34,7 @@ func setWallpaper(filename string) error {
 
 // UnsplashWallpaper changes the wallpaper using unsplash.
 func (c *Configuration) UnsplashWallpaper() {
-	searchTerms := ""
-	for i, v := range c.SearchTerms {
-		if i == len(c.SearchTerms)-1 {
-			searchTerms += v
-		} else {
-			searchTerms += v + ","
-		}
-	}
+	searchTerms := strings.Join(c.SearchTerms, ",")
 
 	url := fmt.Sprintf("https://source.unsplash.com/%v/?%v", c.Resolution, searchTerms)
 
@@ -125,17 +118,15 @@ func (c *Configuration) DirectoryWallpaper() {
 
 			wallpapers := c.getValidWallpapers()
 			sort.Strings(wallpapers)
-			for i := range wallpapers {
-				if i == len(contents)-1 {
-					i = 0
-				}
+			for {
+				for i := range wallpapers {
+					if err := setWallpaper(contents[i]); err != nil {
+						fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
+						os.Exit(1)
+					}
 
-				if err := setWallpaper(contents[i]); err != nil {
-					fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
-					os.Exit(1)
+					time.Sleep(duration)
 				}
-
-				time.Sleep(duration)
 			}
 
 		} else {

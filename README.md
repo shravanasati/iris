@@ -11,14 +11,24 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 ## 🌐 Table of Contents
 
 - [Features](https://github.com/Shravan-1908/iris#-features)
+
 - [Installation](https://github.com/Shravan-1908/iris#%EF%B8%8F-installation)
+    * [Package Managers](https://github.com/Shravan-1908/iris/#package-managers)
+    * [Using Go compiler](https://github.com/Shravan-1908/iris/#using-go-compiler)
+    * [Build from source](https://github.com/Shravan-1908/iris/#build-from-source)
+
 - [Motivation](https://github.com/Shravan-1908/iris#-motivation)
+
 - [Usage](https://github.com/Shravan-1908/iris#-usage)
     * [Root command](https://github.com/Shravan-1908/iris#root-command)
     * [Customization](https://github.com/Shravan-1908/iris#customization)
+
 - [Changelog](https://github.com/Shravan-1908/iris#-changelog)
+
 - [Versioning](https://github.com/Shravan-1908/iris#-versioning)
+
 - [Licensing](https://github.com/Shravan-1908/iris#-license)
+
 - [Contribution](https://github.com/Shravan-1908/iris#-contribution)
 
 
@@ -36,13 +46,68 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 
 ## ⚡️ Installation
 
-Open powershell **as Admin** and execute the following command:
+### Package Managers
 
+#### Windows
 ```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; (Invoke-WebRequest -Uri https://raw.githubusercontent.com/Shravan-1908/iris/master/scripts/windows_install.ps1 -UseBasicParsing).Content | powershell -
+scoop install https://github.com/Shravan-1908/iris/raw/main/iris.json
 ```
 
-This installation script will automatically add iris to PATH and startup applications, so whenever the PC is booted, iris will be launched.
+<!-- iris is available on various package managers across different operating systems.
+
+iris is present in the AUR. If you're on an Arch based Linux distro,
+execute:
+
+```
+git clone https://aur.archlinux.org/iris-bin.git
+cd iris-bin
+makepkg -si
+```
+
+Or use any AUR helper like yay:
+```
+yay -S iris-bin
+``` -->
+
+
+### GitHub Releases
+
+iris binaries for all operating systems are available on the [GitHub Releases](https://github.com/Shravan-1908/iris/releases/latest) tab. You can download them manually and place them on `PATH` in order to use them.
+
+
+
+### Using Go compiler
+
+If you've Go compiler (v1.16 or above) installed on your system, you can install iris via the following command. 
+
+For Go >= v1.17:
+
+```
+go install github.com/Shravan-1908/iris@latest
+```
+
+For Go v1.16:
+
+```
+go get github.com/Shravan-1908/iris@latest
+```
+
+
+### Build from source
+
+You can alternatively build iris from source via the following commands (again, requires go1.16 or above):
+
+```
+git clone https://github.com/Shravan-1908/iris.git
+cd ./iris
+go build
+```
+
+If you want to build iris in release mode (stripped binaries, compressed dsitribution and cross compilation), execute the following command. You can also control the release builds behavior using the [`release.config.json`](./scripts/release.config.json) file.
+
+```
+python ./scripts/build.py
+```
 
 <br>
 
@@ -114,7 +179,7 @@ All configuration fields are pretty self explanatory, still I'd like to describe
 
 - Change wallpaper: Boolean value for whether to continuously change wallpapers or not.
 
-- Change wallpaper duration: If to change wallpapers, then after how long. The duration value can be anything like `30s` `4m5s` `1h` `2h30m8s`.
+- Change wallpaper duration: If to change wallpapers, then after how long. The duration value can be anything in format `30s` `4m5s` `1h` `2h30m8s`.
 
 - Wallpaper directory: Specify your own wallpaper directory if you don't want iris to use unsplash.
 

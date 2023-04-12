@@ -12,3 +12,7 @@
 - Shell completion scripts generation
 - Config command
 - Minor bug fixes
+
+## v0.2.1 (12/04/23)
+- Minor bug fixes
+- Use time units like 's', 'ms', 'm', 'h' to define change wallpaper duration
