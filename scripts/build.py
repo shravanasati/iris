@@ -1,3 +1,4 @@
+import hashlib
 from subprocess import run, CalledProcessError
 from multiprocessing import Pool, cpu_count
 import shlex
@@ -12,6 +13,18 @@ STRIP = True
 VERBOSE = False
 FORMAT = True
 PLATFORMS: list[str] = []
+
+
+def hash_file(filename: str):
+    h = hashlib.sha256()
+
+    with open(filename, "rb") as file:
+        chunk = 0
+        while chunk != b"":
+            chunk = file.read(1024)
+            h.update(chunk)
+
+    return h.hexdigest()
 
 
 def init_config():
@@ -73,7 +86,7 @@ def build(platform: str) -> None:
 
         output_dir = f"temp/{APP_NAME}_{build_os}_{build_arch}"
         if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+            os.makedirs(output_dir, exist_ok=True)
 
         executable_path = f"{output_dir}/{APP_NAME}"
         if build_os == "windows":
@@ -104,6 +117,19 @@ def build(platform: str) -> None:
         print(e)
 
 
+def generate_checksums() -> None:
+    project_base = Path(__file__).parent.parent
+    dist_folder = project_base / "dist"
+    checksum = ""
+
+    for item in dist_folder.iterdir():
+        checksum += f"{hash_file(item.absolute())}  {item.name}\n"
+
+    checksum_file = dist_folder / "checksums.txt"
+    with open(str(checksum_file), 'w') as f:
+        f.write(checksum)
+
+
 def cleanup() -> None:
     """
     Removes the `temp` folder.
@@ -124,5 +150,8 @@ if __name__ == "__main__":
 
     with Pool(processes=max_procs) as pool:
         pool.map(build, PLATFORMS)
+
+    print("==> #️⃣  Generating checksums.")
+    generate_checksums()
 
     cleanup()

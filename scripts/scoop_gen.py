@@ -58,7 +58,8 @@ if __name__ == "__main__":
 
         schema["architecture"][entry] = arch_data
 
-    with open("iris.json", 'w') as f:
+    jsonfile_path = project_base / "scripts" / "iris.json"
+    with open(str(jsonfile_path), 'w') as f:
         f.write(json.dumps(schema, indent=2))
 
     print("Scoop app manifest file for iris generated.")

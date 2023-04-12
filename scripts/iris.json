@@ -5,17 +5,17 @@
     "64bit": {
       "url": "https://github.com/Shravan-1908/iris/releases/latest/download/iris_windows_amd64.zip",
       "extract_dir": "iris_windows_amd64",
-      "hash": "8842f29bb62bd165c08a9ced03a3c2717f284da2edf59f37b559e0bec1a18378"
+      "hash": "0dbc3e5777b175e5292623f8465e3d2b789efc57a6ad00bf5139eeef199e2b52"
     },
     "32bit": {
       "url": "https://github.com/Shravan-1908/iris/releases/latest/download/iris_windows_386.zip",
       "extract_dir": "iris_windows_386",
-      "hash": "f1dee9aa3a46b327a1d6981422a49a3444b401694d274fa9330a2d2edee0bf33"
+      "hash": "80f9f1972028110f093fa08a1c559c2211488e996e2e3370dbc593eb4f610f14"
     },
     "arm64": {
       "url": "https://github.com/Shravan-1908/iris/releases/latest/download/iris_windows_arm64.zip",
       "extract_dir": "iris_windows_arm64",
-      "hash": "aa7502c069961149b5da44bd2c46a5ae7c8eba63ded4a179264b018db1c4d583"
+      "hash": "875b390c57f3c13a9e79831e9e0e093fd3fa621baa533a8188b594c45f35e66f"
     }
   },
   "license": "MIT",
