@@ -52,7 +52,6 @@ if __name__ == "__main__":
         dist_file = project_base / "dist" / filename
         arch_data = {
             "url": f"{IRIS_BASE_URL}/releases/latest/download/{filename}",
-            "extract_dir": filename.split(".")[0],  # remove .zip
             "hash": hash_file(str(dist_file))
         }
 
