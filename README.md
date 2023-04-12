@@ -22,6 +22,7 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 - [Usage](https://github.com/Shravan-1908/iris#-usage)
     * [Root command](https://github.com/Shravan-1908/iris#root-command)
     * [Customization](https://github.com/Shravan-1908/iris#customization)
+    * [Shell Completions](https://github.com/Shravan-1908/iris#shell-completions)
 
 - [Changelog](https://github.com/Shravan-1908/iris#-changelog)
 
@@ -209,6 +210,14 @@ iris v0.2.1
 | Save Wallpaper Directory  |                                  |
 +---------------------------+----------------------------------+
 ```
+
+### Shell-Completions
+
+iris can generate shell completions for powershell, fish, bash and zsh.
+
+`iris completion shell_name`
+
+It will output a completion script for your shell. Copy and paste it on your shell profile.
 
 
 ## ⏪ Changelog
