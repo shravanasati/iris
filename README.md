@@ -50,7 +50,7 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 
 #### Windows
 ```powershell
-scoop install https://github.com/Shravan-1908/iris/raw/main/iris.json
+scoop install https://github.com/Shravan-1908/iris/raw/main/scripts/iris.json
 ```
 
 <!-- iris is available on various package managers across different operating systems.
