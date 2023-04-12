@@ -1,7 +1,7 @@
 # iris
 
 <p align="center"> 
-	<img src="assets/gopher.png" height="300px">
+	<img src="assets/icon.png" height="300px">
 </p>
 
 iris is an easy to use, cross platform and customizable wallpaper manager.
@@ -213,12 +213,7 @@ iris v0.2.1
 
 ## ⏪ Changelog
 
-The changes made in the latest release, v0.2.0 are:
-
-- Linux and Mac support
-- Shell completion scripts generation
-- Config command
-- Minor bug fixes
+Entire changelog can be viewed in the [`CHANGELOG.md`](CHANGELOG.md)
 
 <br>
 
