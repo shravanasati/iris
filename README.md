@@ -59,7 +59,12 @@ This installation script will automatically add iris to PATH and startup applica
 
 ### Package Managers
 
-iris is available on various package managers across different operating systems.
+#### Windows
+```powershell
+scoop install https://github.com/Shravan-1908/iris/raw/main/iris.json
+```
+
+<!-- iris is available on various package managers across different operating systems.
 
 iris is present in the AUR. If you're on an Arch based Linux distro,
 execute:
@@ -73,7 +78,7 @@ makepkg -si
 Or use any AUR helper like yay:
 ```
 yay -S iris-bin
-```
+``` -->
 
 
 ### GitHub Releases

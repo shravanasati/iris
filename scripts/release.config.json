@@ -1,10 +1,12 @@
 {
 	"app_name": "iris",
+	"version": "0.2.1",
 	"platforms": [
 		"linux/amd64",
 		"linux/arm64",
 		"windows/amd64",
 		"windows/386",
+		"windows/arm64",
 		"darwin/amd64",
 		"darwin/arm64"
 	],
