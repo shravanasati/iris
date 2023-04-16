@@ -37,7 +37,7 @@ func (c *Configuration) WriteConfig() {
 	}
 	defer configFile.Close()
 
-	if _, wer := configFile.Write(jsonifyConfig(c)); wer != nil {
+	if _, wer := configFile.Write(jsonify(c)); wer != nil {
 		fmt.Println("Unable to write config due to following error:", wer)
 		os.Exit(1)
 	}
@@ -81,7 +81,7 @@ func readFile(file string) string {
 	return text
 }
 
-// GetIrisDir returns the iris home directory, namely `~/.iris`. Also creates the directory if it doesn't exists.
+// GetIrisDir returns the iris home directory, namely `~/.iris`. Also creates the directory if it doesn't exists, and the necessary subfolders wallpapers, temp and cache.
 func GetIrisDir() string {
 	usr, e := user.Current()
 	if e != nil {
@@ -91,32 +91,26 @@ func GetIrisDir() string {
 	// * determining iris's directory
 	dir := filepath.Join(usr.HomeDir, ".iris")
 
-	_, er := os.Stat(dir)
-	if os.IsNotExist(er) {
+	if !CheckFileExists(dir) {
 		os.Mkdir(dir, os.ModePerm)
 	}
 
 	wallpaperDir := filepath.Join(dir, "wallpapers")
-	_, err := os.Stat(wallpaperDir)
-	if os.IsNotExist(err) {
+	if !CheckFileExists(wallpaperDir) {
 		os.Mkdir(wallpaperDir, os.ModePerm)
 	}
 
 	tempDir := filepath.Join(dir, "temp")
-	_, err = os.Stat(tempDir)
-	if os.IsNotExist(err) {
+	if !CheckFileExists(tempDir) {
 		os.Mkdir(tempDir, os.ModePerm)
 	}
 
-	return dir
-}
-
-func jsonifyConfig(config *Configuration) []byte {
-	byteArray, err := json.MarshalIndent(config, "", "    ")
-	if err != nil {
-		panic(err)
+	cacheDir := filepath.Join(dir, "cache")
+	if !CheckFileExists(cacheDir) {
+		os.Mkdir(cacheDir, os.ModePerm)
 	}
-	return (byteArray)
+
+	return dir
 }
 
 func getDefaultConfig() *Configuration {
@@ -149,7 +143,7 @@ func ReadConfig() *Configuration {
 
 	configContent := readFile(configFilePath)
 	if e := json.Unmarshal([]byte(configContent), &config); e != nil {
-		fmt.Println(fmt.Println("Looks like the iris configuration is corrupted/broken, rewriting it with default values."))
+		fmt.Println("Looks like the iris configuration is corrupted/broken, rewriting it with default values.")
 		defaultConfig := getDefaultConfig()
 		defaultConfig.WriteConfig()
 		return defaultConfig

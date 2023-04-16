@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"encoding/json"
 	"errors"
 	"io"
 	"math/rand"
@@ -65,4 +66,12 @@ func downloadImage(url string, temp bool) (string, error) {
 	}
 
 	return file.Name(), nil
+}
+
+func jsonify(data any) []byte {
+	byteArray, err := json.MarshalIndent(data, "", "    ")
+	if err != nil {
+		panic(err)
+	}
+	return (byteArray)
 }
