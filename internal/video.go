@@ -33,7 +33,7 @@ func breakIntoFrames(videoPath string) (string, error) {
 		"ffmpeg", 
 		"-i", videoPath, 
 		"-hide_banner", 
-		"-r", "30", 
+		"-r", "5", 
 		"-loglevel", "debug",
 		framesLocation + "/thumb_%04d.png",
 	)
@@ -79,7 +79,7 @@ func SetVideoWallpaper(videoPath string) error {
 	for {
 		for _, file := range wallpapers {
 			setWallpaper(file)
-			time.Sleep(time.Millisecond * 30) // 30 is the fps
+			time.Sleep(time.Millisecond * 10)
 		}
 	}
 
