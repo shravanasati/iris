@@ -1,7 +1,7 @@
 $startupFolder = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup"
-$shortcutPath = "$startupFolder\iris.lnk"
+$scriptPath = "$startupFolder\iris.bat"
 
-if (Test-Path $shortcutPath -PathType Leaf) {
-	Remove-Item $shortcutPath -Force
+if (Test-Path $scriptPath -PathType Leaf) {
+	Remove-Item $scriptPath -Force
     Write-Host "Removed iris from startup applications."
 }
