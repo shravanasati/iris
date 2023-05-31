@@ -15,8 +15,8 @@ type cache struct {
 
 func (c *cache) get(videoPath string) (string, error) {
 	value, ok := c.data[videoPath]
-	if !ok  || !CheckFileExists(value) {
-		delete(c.data, value)  // in case checkfilexists reports false
+	if !ok || !CheckFileExists(value) {
+		delete(c.data, value) // in case checkfilexists reports false
 		return "", fmt.Errorf("didn't find %v in cache", videoPath)
 	}
 	return value, nil

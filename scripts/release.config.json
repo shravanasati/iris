@@ -12,5 +12,6 @@
 	],
 	"format_code": true,
 	"strip_binaries": true,
-	"verbose": false
+	"verbose": false,
+	"pandoc_conversion": true
 }

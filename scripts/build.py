@@ -9,10 +9,11 @@ from pathlib import Path
 
 # build config, would be altered by init_config()
 APP_NAME = "iris"
-STRIP = True
-VERBOSE = False
-FORMAT = True
-PLATFORMS: list[str] = []
+STRIP = True  # whether to strip binaries
+VERBOSE = False  # go compiler verbose output
+FORMAT = True  # format code before building binaries
+PLATFORMS: list[str] = []  # list of platforms to build for
+PANDOC_CONVERSION = True  # whether to convert readme.md to plain text using pandoc in distributions
 
 
 def hash_file(filename: str):
@@ -29,7 +30,7 @@ def hash_file(filename: str):
 
 def init_config():
     try:
-        global APP_NAME, STRIP, VERBOSE, FORMAT, PLATFORMS
+        global APP_NAME, STRIP, VERBOSE, FORMAT, PLATFORMS, PANDOC_CONVERSION
         release_config_file = Path(__file__).parent.resolve() / 'release.config.json'
         with open(str(release_config_file)) as f:
             config = json.load(f)
@@ -39,6 +40,7 @@ def init_config():
             VERBOSE = config["verbose"]
             FORMAT = config["format_code"]
             PLATFORMS = config["platforms"]
+            PANDOC_CONVERSION = config["pandoc_conversion"]
 
     except Exception as e:
         print(f"==> ❌ Some error occured while reading the release config:\n{e}")
@@ -60,10 +62,20 @@ def pack(dir: str, platform: str) -> None:
     """
     Copies README, LICENSE, CHANGELOG and iris logo to the output directory and creates an archive for the given platform.
     """
-    shutil.copyfile("./README.md", f"{dir}/README.md")
-    shutil.copyfile("./LICENSE.txt", f"{dir}/LICENSE.txt")
-    # shutil.copyfile("./CHANGELOG.md", f"{dir}/CHANGELOG.md")
-    shutil.copyfile("./assets/icon.png", f"{dir}/icon.png")
+    project_base = Path(__file__).parent.parent
+    readme_file = project_base / "temp" / "README.txt"
+    if not readme_file.exists():
+        # if pandoc conversion failed or not enabled
+        readme_file = project_base / "README.md"
+
+    license_file = project_base / "LICENSE.txt"
+    icon_file = project_base / "assets" / "icon.png"
+    # changelog_file  = project_base / "CHANGELOG.md"
+
+    shutil.copyfile(str(readme_file), f"{dir}/README.txt")
+    shutil.copyfile(str(license_file), f"{dir}/LICENSE.txt")
+    # shutil.copyfile(str(changelog_file), f"{dir}/CHANGELOG.md")
+    shutil.copyfile(str(icon_file), f"{dir}/icon.png")
 
     splitted = platform.split("/")
     build_os = splitted[0]
@@ -144,6 +156,16 @@ if __name__ == "__main__":
     init_folders()
     if FORMAT:
         run(shlex.split("go fmt ./..."), check=True)
+
+    try:
+        if PANDOC_CONVERSION:
+            readme_file = Path(__file__).parent.parent / "README.md"
+            run(
+                f"pandoc -s {str(readme_file)} -o ./temp/README.txt --to plain",
+                check=True
+            )
+    except CalledProcessError:
+        print("==> ⚠  Unable to convert README.md to README.txt using pandoc in distributions, make sure you've pandoc installed on your system.")
 
     max_procs = cpu_count()
     print(f"==> 🔥 Starting builds with {max_procs} parallel processes.")

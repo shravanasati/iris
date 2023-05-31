@@ -28,14 +28,14 @@ func breakIntoFrames(videoPath string) (string, error) {
 	if !CheckFileExists(framesLocation) {
 		os.Mkdir(framesLocation, os.ModePerm)
 	}
-	
+
 	cmd := exec.Command(
-		"ffmpeg", 
-		"-i", videoPath, 
-		"-hide_banner", 
-		"-r", "5", 
+		"ffmpeg",
+		"-i", videoPath,
+		"-hide_banner",
+		"-r", "5",
 		"-loglevel", "debug",
-		framesLocation + "/thumb_%04d.png",
+		framesLocation+"/thumb_%04d.png",
 	)
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
