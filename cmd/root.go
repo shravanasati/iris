@@ -34,6 +34,8 @@ import (
 var c = internal.ReadConfig()
 
 func realMain() {
+	internal.ClearTemp()
+	
 	// * determining if to use unsplash or local images
 	useUnsplash := false
 	if strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckFileExists(c.WallpaperDirectory) {
@@ -60,11 +62,9 @@ func realMain() {
 			for {
 				c.UnsplashWallpaper()
 				time.Sleep(duration)
-				internal.ClearTemp()
 			}
 		} else {
 			c.UnsplashWallpaper()
-			internal.ClearTemp()
 		}
 
 		// * wallpapers via local directory

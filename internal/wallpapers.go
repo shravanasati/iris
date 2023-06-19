@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"strings"
 	"time"
@@ -17,12 +16,12 @@ var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
 
 // setWallpaper sets the wallpaper to the given file according to the OS.
 func setWallpaper(filename string) error {
-	switch runtime.GOOS {
-	case "windows", "linux", "darwin":
-		return wallpaper.SetFromFile(filename)
-	default:
-		return fmt.Errorf("unsupported platform")
+	absPath, err := (filepath.Abs(filename))
+	if err != nil {
+		return err
 	}
+	fmt.Println(absPath)
+	return wallpaper.SetFromFile(absPath)
 }
 
 // UnsplashWallpaper changes the wallpaper using unsplash.
