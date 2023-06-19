@@ -3,8 +3,8 @@ module github.com/Shravan-1908/iris
 go 1.18
 
 require (
+	github.com/Shravan-1908/go-wallpaper v0.0.0-20230619063400-c10006d54870
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/reujab/wallpaper v0.0.0-20210630195606-5f9f655b3740
 	github.com/spf13/cobra v1.7.0
 )
 

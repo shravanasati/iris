@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"sort"
 	"strings"
 	"time"
 
-	"github.com/reujab/wallpaper"
+	"github.com/Shravan-1908/go-wallpaper"
 )
 
 var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
@@ -19,14 +18,8 @@ var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
 // setWallpaper sets the wallpaper to the given file according to the OS.
 func setWallpaper(filename string) error {
 	switch runtime.GOOS {
-	case "windows":
+	case "windows", "linux", "darwin":
 		return wallpaper.SetFromFile(filename)
-	case "linux":
-		cmd := exec.Command("feh", "--bg-scale", filename)
-		return cmd.Run()
-	case "darwin":
-		cmd := exec.Command("osascript", "-e", "tell application \"Finder\" to set desktop picture to POSIX file "+filename)
-		return cmd.Run()
 	default:
 		return fmt.Errorf("unsupported platform")
 	}
