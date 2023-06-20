@@ -43,7 +43,7 @@ func breakIntoFrames(videoPath string) (string, error) {
 	if e := cmd.Run(); e != nil {
 		fmt.Println(e)
 		fmt.Println(cmd.Stdout, cmd.Stderr)
-		return "", fmt.Errorf("unable to break video into frames. make sure you've ffmpeg installed")
+		return "", fmt.Errorf("unable to break video into frames. make sure you've ffmpeg installed and present on path")
 	}
 
 	if er := cache.set(videoPath, framesLocation); er != nil {
@@ -56,12 +56,12 @@ func breakIntoFrames(videoPath string) (string, error) {
 // changes the wallpaper every few milliseconds to imitate that wallpaper is a video.
 func SetVideoWallpaper(videoPath string) error {
 	if !CheckFileExists(videoPath) {
-		return fmt.Errorf("The file `%s` is non-existent.", videoPath)
+		return fmt.Errorf("the file `%s` is non-existent", videoPath)
 	}
 	splitted := strings.Split(videoPath, ".")
 	ext := splitted[len(splitted)-1]
 	if !StringInSlice(ext, []string{"mp4", "mkv"}) {
-		return fmt.Errorf("The file `%s` is either unsupported or not a valid video file.", videoPath)
+		return fmt.Errorf("the file `%s` is either unsupported or not a valid video file", videoPath)
 	}
 
 	framesLocation, er := breakIntoFrames(videoPath)

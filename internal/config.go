@@ -95,19 +95,12 @@ func GetIrisDir() string {
 		os.Mkdir(dir, os.ModePerm)
 	}
 
-	wallpaperDir := filepath.Join(dir, "wallpapers")
-	if !CheckFileExists(wallpaperDir) {
-		os.Mkdir(wallpaperDir, os.ModePerm)
-	}
-
-	tempDir := filepath.Join(dir, "temp")
-	if !CheckFileExists(tempDir) {
-		os.Mkdir(tempDir, os.ModePerm)
-	}
-
-	cacheDir := filepath.Join(dir, "cache")
-	if !CheckFileExists(cacheDir) {
-		os.Mkdir(cacheDir, os.ModePerm)
+	subDirs := []string{"wallpapers", "temp", "cache"}
+	for _, subDir := range subDirs {
+		dirPath := filepath.Join(dir, subDir)
+		if !CheckFileExists(dirPath) {
+			os.Mkdir(dirPath, os.ModePerm)
+		}
 	}
 
 	return dir
