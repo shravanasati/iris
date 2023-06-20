@@ -9,7 +9,7 @@ import (
 
 const (
 	NAME    string = "iris"
-	VERSION string = "v0.2.1"
+	VERSION string = "v0.3.0"
 )
 
 func main() {
