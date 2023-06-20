@@ -78,7 +78,7 @@ func SetVideoWallpaper(videoPath string) error {
 
 	for {
 		for _, file := range wallpapers {
-			setWallpaper(file)
+			SetWallpaper(file)
 			time.Sleep(time.Millisecond * 10)
 		}
 	}

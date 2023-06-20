@@ -14,13 +14,16 @@ import (
 
 var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
 
-// setWallpaper sets the wallpaper to the given file according to the OS.
-func setWallpaper(filename string) error {
+// SetWallpaper sets the wallpaper to the given file.
+func SetWallpaper(filename string) error {
+	if !CheckFileExists(filename) {
+		return fmt.Errorf("the file `%s` doesn't exist", filename)
+	}
+
 	absPath, err := (filepath.Abs(filename))
 	if err != nil {
 		return err
 	}
-	fmt.Println(absPath)
 	return wallpaper.SetFromFile(absPath)
 }
 
@@ -35,7 +38,7 @@ func (c *Configuration) UnsplashWallpaper() {
 		if e != nil {
 			fmt.Println(e)
 		} else {
-			if se := setWallpaper(f); se != nil {
+			if se := SetWallpaper(f); se != nil {
 				fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
 				os.Exit(1)
 			}
@@ -45,7 +48,7 @@ func (c *Configuration) UnsplashWallpaper() {
 		if e != nil {
 			fmt.Println(e)
 		} else {
-			if se := setWallpaper(f); se != nil {
+			if se := SetWallpaper(f); se != nil {
 				fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
 				os.Exit(1)
 			}
@@ -88,14 +91,14 @@ func (c *Configuration) DirectoryWallpaper() {
 				duration = time.Minute * 5
 			}
 			for {
-				if err := setWallpaper(randomChoice(contents)); err != nil {
+				if err := SetWallpaper(randomChoice(contents)); err != nil {
 					fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
 					os.Exit(1)
 				}
 				time.Sleep(duration)
 			}
 		} else {
-			if err := setWallpaper(randomChoice(contents)); err != nil {
+			if err := SetWallpaper(randomChoice(contents)); err != nil {
 				fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
 				os.Exit(1)
 			}
@@ -112,7 +115,7 @@ func (c *Configuration) DirectoryWallpaper() {
 			sort.Strings(wallpapers)
 			for {
 				for i := range wallpapers {
-					if err := setWallpaper(contents[i]); err != nil {
+					if err := SetWallpaper(contents[i]); err != nil {
 						fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
 						os.Exit(1)
 					}
@@ -122,7 +125,7 @@ func (c *Configuration) DirectoryWallpaper() {
 			}
 
 		} else {
-			if err := setWallpaper(contents[0]); err != nil {
+			if err := SetWallpaper(contents[0]); err != nil {
 				fmt.Println("Unable to set wallpaper. Make sure you've `feh` installed if you're on a Linux system.")
 				os.Exit(1)
 			}
