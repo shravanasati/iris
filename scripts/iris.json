@@ -1,23 +1,23 @@
 {
   "homepage": "https://github.com/Shravan-1908/iris",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "architecture": {
     "64bit": {
       "url": "https://github.com/Shravan-1908/iris/releases/latest/download/iris_windows_amd64.zip",
-      "hash": "0dbc3e5777b175e5292623f8465e3d2b789efc57a6ad00bf5139eeef199e2b52"
+      "hash": "0f894cfb1b2c12422365a7facbce8d25c4503610bf3df41626f133d272659c7c"
     },
     "32bit": {
       "url": "https://github.com/Shravan-1908/iris/releases/latest/download/iris_windows_386.zip",
-      "hash": "80f9f1972028110f093fa08a1c559c2211488e996e2e3370dbc593eb4f610f14"
+      "hash": "21a3d8718b1cafd31b09778cc15ceacb41778aa7d3196aed68c2e0ac67461cae"
     },
     "arm64": {
       "url": "https://github.com/Shravan-1908/iris/releases/latest/download/iris_windows_arm64.zip",
-      "hash": "875b390c57f3c13a9e79831e9e0e093fd3fa621baa533a8188b594c45f35e66f"
+      "hash": "3e32a77a61920a821879777e2325a85b121ad51e8cf88ceb4a6aa109a00fb968"
     }
   },
   "license": "MIT",
   "bin": "iris.exe",
   "checkver": "github",
-  "post_install": "$startupFolder = \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\"\n$scriptPath = \"$startupFolder\\iris.bat\"\n\nif (Test-Path $scriptPath -PathType Leaf) {\n    Exit 0\n}\n\n$confirmation = read-host \"Would you like to add iris to startup applications? (y/N) \"\n\nif ($confirmation -eq \"Y\" -or $confirmation -eq \"y\") {\n    write-output 'powershell -NonInteractive \"start-process iris -WindowStyle Hidden\"'> $scriptPath\n    Write-Host \"iris has been added to the list of startup applications.\"\n}\nelse {\n    write-host \"OK.\"\n}",
+  "post_install": "$startupFolder = \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\"\n$scriptPath = \"$startupFolder\\iris.bat\"\n\nif (Test-Path $scriptPath -PathType Leaf) {\n    Exit 0\n}\n\n$confirmation = read-host \"Would you like to add iris to startup applications? (y/N) \"\n\nif ($confirmation -eq \"Y\" -or $confirmation -eq \"y\") {\n    write-output 'powershell -NonInteractive \"start-process iris -WindowStyle Hidden\"' > $scriptPath\n    Write-Host \"iris has been added to the list of startup applications.\"\n}\nelse {\n    write-host \"OK.\"\n}",
   "post_uninstall": "$startupFolder = \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\"\n$scriptPath = \"$startupFolder\\iris.bat\"\n\nif (Test-Path $scriptPath -PathType Leaf) {\n\tRemove-Item $scriptPath -Force\n    Write-Host \"Removed iris from startup applications.\"\n}"
 }

@@ -1,6 +1,6 @@
 {
 	"app_name": "iris",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"platforms": [
 		"linux/amd64",
 		"linux/arm64",

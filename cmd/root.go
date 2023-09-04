@@ -35,7 +35,7 @@ var c = internal.ReadConfig()
 
 func realMain() {
 	internal.ClearTemp()
-	
+
 	// * determining if to use unsplash or local images
 	useUnsplash := false
 	if strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckFileExists(c.WallpaperDirectory) {

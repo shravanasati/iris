@@ -51,7 +51,7 @@ func downloadImage(url string, temp bool) (string, error) {
 		tempDir = filepath.Join(GetIrisDir(), "temp")
 	}
 
-	filename := time.Now().Format("02-01-2006 15-04-05"+".jpg")
+	filename := time.Now().Format("02-01-2006 15-04-05" + ".jpg")
 	filename = strings.ReplaceAll(filename, " ", "-")
 	file, err := os.Create(filepath.Join(tempDir, filename))
 
