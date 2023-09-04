@@ -123,6 +123,29 @@ I wanted a wallpaper manager which gave a bing wallpaper + nitrogen like interfa
 
 Simply calling `iris` without any flags and arguments from the terminal would launch iris and it will change the desktop wallpaper according to the set configuration.
 
+### Set
+
+The set command accepts a filepath as an argument and sets it as the desktop wallpaper.
+
+Example:
+```
+iris set ~/Pictures/my-fav-image.jpg
+```
+
+### Video
+
+The video wallpaper support is currently experimental and requires ffmpeg to work.
+
+Example:
+```
+iris video ~/Videos/path-to-video.mp4
+```
+
+Only mp4 and mkv videos are supported at the moment.
+
+The first time running this command on a single video might take some time since iris first converts the video into frames using ffmpeg and then iterates through the frames and sets each one of them as wallpaper every few milliseconds.
+
+
 ### Customization
 
 iris uses [unsplash](https://source.unsplash.com) for fetching remote wallpapers. However, you can use your own collection of wallpapers too.
