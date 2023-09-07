@@ -24,9 +24,9 @@ func StringInSlice(s string, slice []string) bool {
 }
 
 func randomChoice(slice []string) string {
-	rand.Seed(time.Now().UnixNano())
+	randGen := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	return slice[rand.Intn(len(slice))]
+	return slice[randGen.Intn(len(slice))]
 }
 
 func CheckFileExists(filePath string) bool {

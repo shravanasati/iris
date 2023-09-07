@@ -11,6 +11,7 @@ import (
 )
 
 var lastCheckedFilePath = filepath.Join(GetIrisDir(), "last_checked.update")
+var timeFormat = time.RFC3339
 
 func getLastCheckedTime() time.Time {
 	if !CheckFileExists(lastCheckedFilePath) {
@@ -23,7 +24,7 @@ func getLastCheckedTime() time.Time {
 		writeLastCheckedTime(t)
 		return t
 	} else {
-		t, err := time.Parse(time.RFC3339, readFile(lastCheckedFilePath))
+		t, err := time.Parse(timeFormat, readFile(lastCheckedFilePath))
 		if err != nil {
 			panic("unable to parse time in last checked update file")
 		}
@@ -36,7 +37,7 @@ func writeLastCheckedTime(t time.Time) {
 	if err != nil {
 		panic("unable to create the last checked update file")
 	}
-	lastCheckedFile.Write([]byte(t.Format(time.RFC3339)))
+	lastCheckedFile.Write([]byte(t.Format(timeFormat)))
 }
 
 type releaseInfo struct {
