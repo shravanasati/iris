@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/Shravan-1908/iris/cmd"
+	"github.com/Shravan-1908/iris/internal"
 )
 
 const (
@@ -20,7 +22,15 @@ func main() {
 		}
 	}()
 
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		internal.CheckForUpdates(VERSION)
+		wg.Done()
+	}()
+
 	fmt.Println(NAME, VERSION)
 
 	cmd.Execute()
+	wg.Wait()
 }
