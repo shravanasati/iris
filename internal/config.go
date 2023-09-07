@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -62,23 +61,6 @@ func (c *Configuration) Show() {
 	table.AppendBulk(data)
 
 	table.Render()
-}
-
-// readFile reads the given file and returns the string content of the same.
-func readFile(file string) string {
-	f, ferr := os.Open(file)
-	if ferr != nil {
-		panic(ferr)
-	}
-	defer f.Close()
-
-	text := ""
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		text += scanner.Text()
-	}
-
-	return text
 }
 
 // GetIrisDir returns the iris home directory, namely `~/.iris`. Also creates the directory if it doesn't exists, and the necessary subfolders wallpapers, temp and cache.

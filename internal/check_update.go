@@ -5,7 +5,39 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
+	"time"
 )
+
+var lastCheckedFilePath = filepath.Join(GetIrisDir(), "last_checked.update")
+
+func getLastCheckedTime() time.Time {
+	if !CheckFileExists(lastCheckedFilePath) {
+		lastCheckedFile, err := os.Create(lastCheckedFilePath)
+		if err != nil {
+			panic("unable to create the last checked file")
+		}
+		defer lastCheckedFile.Close()
+		t := time.Now().Add(-1 * time.Hour * 24)
+		writeLastCheckedTime(t)
+		return t
+	} else {
+		t, err := time.Parse(time.RFC3339, readFile(lastCheckedFilePath))
+		if err != nil {
+			panic("unable to parse time in last checked update file")
+		}
+		return t
+	}
+}
+
+func writeLastCheckedTime(t time.Time) {
+	lastCheckedFile, err := os.Create(lastCheckedFilePath)
+	if err != nil {
+		panic("unable to create the last checked update file")
+	}
+	lastCheckedFile.Write([]byte(t.Format(time.RFC3339)))
+}
 
 type releaseInfo struct {
 	HTMLURL    string `json:"html_url"`
@@ -13,16 +45,20 @@ type releaseInfo struct {
 	Name       string `json:"name"`
 	IsDraft    bool   `json:"draft"`
 	IsPrelease bool   `json:"prerelease"`
-	Body       string
+	Body       string `json:"body"`
 }
 
 func (ri releaseInfo) display() {
-	fmt.Printf("\nnote: new `%s` of iris is now available at `%s` \n\nfull release article: \ntitle: %s \nbody: %s\n", ri.TagName, ri.HTMLURL, ri.Name, ri.Body)
+	fmt.Printf("\nnote: new `%s` of iris is now available at `%s` \n\nfull release article: \n%s \n%s\n", ri.TagName, ri.HTMLURL, ri.Name, ri.Body)
 }
 
-// todo check for updates only periodically
-
 func CheckForUpdates(currentVersion string) {
+	now := time.Now()
+	if !(now.Sub(getLastCheckedTime()).Hours() >= 24) {
+		// updates were checked for within 24 hours
+		return
+	}
+
 	url := "https://api.github.com/repos/Shravan-1908/iris/releases/latest"
 	releaseInfo := releaseInfo{}
 	resp, err := http.Get(url)
@@ -34,6 +70,7 @@ func CheckForUpdates(currentVersion string) {
 		return
 	}
 	json.Unmarshal(data, &releaseInfo)
+	writeLastCheckedTime(now)
 
 	if currentVersion == releaseInfo.TagName {
 		// no new version

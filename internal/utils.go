@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"bufio"
 	"encoding/json"
 	"errors"
 	"io"
@@ -70,6 +71,23 @@ func downloadImage(url string, temp bool) (string, error) {
 	}
 
 	return file.Name(), nil
+}
+
+// readFile reads the given file and returns the string content of the same.
+func readFile(file string) string {
+	f, ferr := os.Open(file)
+	if ferr != nil {
+		panic(ferr)
+	}
+	defer f.Close()
+
+	text := ""
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		text += scanner.Text()
+	}
+
+	return text
 }
 
 func jsonify(data any) []byte {
