@@ -79,24 +79,17 @@ iris binaries for all operating systems are available on the [GitHub Releases](h
 
 ### Using Go compiler
 
-If you've Go compiler (v1.16 or above) installed on your system, you can install iris via the following command. 
+If you've Go compiler (v1.18 or above) installed on your system, you can install iris via the following command. 
 
-For Go >= v1.17:
 
 ```
 go install github.com/Shravan-1908/iris@latest
 ```
 
-For Go v1.16:
-
-```
-go get github.com/Shravan-1908/iris@latest
-```
-
 
 ### Build from source
 
-You can alternatively build iris from source via the following commands (again, requires go1.16 or above):
+You can alternatively build iris from source via the following commands (again, requires go1.18 or above):
 
 ```
 git clone https://github.com/Shravan-1908/iris.git
@@ -104,7 +97,7 @@ cd ./iris
 go build
 ```
 
-If you want to build iris in release mode (stripped binaries, compressed dsitribution and cross compilation), execute the following command. You can also control the release builds behavior using the [`release.config.json`](./scripts/release.config.json) file.
+If you want to build iris in release mode (stripped binaries, compressed distribution and cross compilation), execute the following command. You can also control the release builds behavior using the [`release.config.json`](./scripts/release.config.json) file.
 
 ```
 python ./scripts/build.py
