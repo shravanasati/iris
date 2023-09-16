@@ -26,6 +26,8 @@ type Configuration struct {
 	SaveWallpaperDirectory  string   `json:"save_wallpaper_directory"`  // directory to save the used wallpapers
 }
 
+// todo refresh configuration file every minute or so
+
 func (c *Configuration) WriteConfig() {
 	configFilePath := filepath.Join(GetIrisDir(), "config.json")
 

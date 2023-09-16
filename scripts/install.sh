@@ -94,15 +94,35 @@ esac
 
 bin_dir="${HOME}/.local/bin"
 ensure mkdir -p "${bin_dir}"
+
+if [ -e "$bin_dir/iris" ]; then
+  echo "Existing iris binary found at ${bin_dir}, removing it..."
+  ensure rm "$bin_dir/iris"
+fi
+
 ensure mv "./iris" "${bin_dir}"
 ensure chmod +x "${bin_dir}/iris"
 
 ensure rm "iris.$extension"
 ensure rm -rf "$platform"
 
-echo 'iris has been downloaded to' ${bin_dir}
-echo "You can run it with:"
-echo "iris"
+echo 'iris has been installed at' ${bin_dir}
+
+read -p "Do you want to add iris to autostart? (y/N):" answer
+if [ "$answer" != "${answer#[Yy]}" ] ;then 
+  autostart_dir="$HOME/.config/autostart"
+  ensure mkdir -p "${autostart_dir}"
+
+  desktop_file="$autostart_dir/iris.desktop"
+
+  echo "[Desktop Entry]" > "$desktop_file"
+  echo "Type=Application" >> "$desktop_file"
+  echo "Name=iris" >> "$desktop_file"
+  echo "Exec=${bin_dir}/iris" >> "$desktop_file"
+
+  echo "iris has been added to autostart."
+fi
+
 
 if ! echo ":${PATH}:" | grep -Fq ":${bin_dir}:"; then
   echo "NOTE: ${bin_dir} is not on your \$PATH. iris will not work unless it is added to \$PATH."
