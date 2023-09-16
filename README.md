@@ -47,6 +47,14 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 
 ## ⚡️ Installation
 
+### Installation Scripts
+
+#### Linux and macOS
+
+```bash
+curl https://raw.githubusercontent.com/Shravan-1908/iris/main/scripts/install.sh | bash
+```
+
 ### Package Managers
 
 #### Windows

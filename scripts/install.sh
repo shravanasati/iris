@@ -83,29 +83,27 @@ else
 fi
 
 printf "Latest Version: %s\n" "$TAG"
-printf "Downloading https://github.com/Shravan-1908/iris/releases/download/v%s/iris-%s-%s.%s\n" "$TAG" "$TAG" "$platform" "$extension"
+printf "Downloading https://github.com/Shravan-1908/iris/releases/download/v%s/iris_%s.%s\n" "$TAG" "$platform" "$extension"
 
-ensure curl -L "https://github.com/Shravan-1908/iris/releases/download/v$TAG/iris-$TAG-$platform.$extension" > "iris.$extension"
+ensure curl -L "https://github.com/Shravan-1908/iris/releases/download/v$TAG/iris_$platform.$extension" > "iris.$extension"
 
 case "$extension" in
-  "zip") unzip -j "iris.$extension" -d "iris-$TAG-$platform" ;;
-  "tar.gz") tar -xvzf "iris.$extension" "iris-$TAG-$platform/iris" ;;
+  "zip") ensure unzip -j "iris.$extension" -d "./iris" ;;
+  "tar.gz") ensure tar -xvzf "iris.$extension" "./iris" ;;
 esac
 
 bin_dir="${HOME}/.local/bin"
 ensure mkdir -p "${bin_dir}"
-ensure mv "iris-$TAG-$platform/iris" "${bin_dir}"
+ensure mv "./iris" "${bin_dir}"
 ensure chmod +x "${bin_dir}/iris"
 
 ensure rm "iris.$extension"
-ensure rm -rf "iris-$TAG-$platform"
+ensure rm -rf "$platform"
 
-cat <<-'EOM'
-iris has been downloaded to the ${bin_dir}
-You can run it with:
-iris
-EOM
+echo 'iris has been downloaded to' ${bin_dir}
+echo "You can run it with:"
+echo "iris"
 
-if ! echo ":${PATH}:" | grep -Fq ":${_bin_dir}:"; then
-  echo "NOTE: ${_bin_dir} is not on your \$PATH. iris will not work unless it is added to \$PATH."
+if ! echo ":${PATH}:" | grep -Fq ":${bin_dir}:"; then
+  echo "NOTE: ${bin_dir} is not on your \$PATH. iris will not work unless it is added to \$PATH."
 fi
