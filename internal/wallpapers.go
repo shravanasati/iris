@@ -27,8 +27,27 @@ func SetWallpaper(filename string) error {
 	return wallpaper.SetFromFile(absPath)
 }
 
-// UnsplashWallpaper changes the wallpaper using unsplash.
-func (c *Configuration) UnsplashWallpaper() {
+// todo get wallpaper
+
+func (c *Configuration) RemoteWallpaper() {
+	switch strings.ToLower(strings.TrimSpace(c.RemoteSource)) {
+	case "unsplash":
+		c.unsplashWallpaper()
+	case "spotlight":
+		c.windowsSpotlightWallpaper()
+	// todo match github url regex here
+	case "github":
+		c.githubRepoWallpaper()
+	default:
+		// todo edit readme about new config options - remote source and check for updates
+		// todo link to remote source docs here
+		fmt.Printf("Invalid remote source `%s`, defaulting to unsplash. Know more about iris configuration at https://github.com/Shravan-1908/iris#customization \n", c.RemoteSource)
+		c.unsplashWallpaper()
+	}
+}
+
+// unsplashWallpaper changes the wallpaper using unsplash.
+func (c *Configuration) unsplashWallpaper() {
 	searchTerms := strings.Join(c.SearchTerms, ",")
 
 	url := fmt.Sprintf("https://source.unsplash.com/%v/?%v", c.Resolution, searchTerms)
@@ -56,9 +75,15 @@ func (c *Configuration) UnsplashWallpaper() {
 	}
 }
 
+func (c *Configuration) windowsSpotlightWallpaper() {
+	// searchTerms := strings.Join(c.SearchTerms, ",")
+}
+
+func (c *Configuration) githubRepoWallpaper() {}
+
 func (c *Configuration) getValidWallpapers() []string {
 	contents := []string{}
-	tempContents, er := ioutil.ReadDir(c.WallpaperDirectory)
+	tempContents, er := os.ReadDir(c.WallpaperDirectory)
 	if er != nil {
 		panic(er)
 	}

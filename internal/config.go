@@ -24,6 +24,8 @@ type Configuration struct {
 	SelectionType           string   `json:"selection_type"`            // directory wallpaper selection type, either sorted or random
 	SaveWallpaper           bool     `json:"save_wallpaper"`            // whether to save the used wallpapers or not
 	SaveWallpaperDirectory  string   `json:"save_wallpaper_directory"`  // directory to save the used wallpapers
+	RemoteSource            string   `json:"remote_source"`             // remote source to fetch wallpapers from
+	CheckForUpdates         bool     `json:"check_for_updates"`         // whether to check for updates
 }
 
 // todo refresh configuration file every minute or so
@@ -91,6 +93,8 @@ func GetIrisDir() string {
 	return dir
 }
 
+// todo add new configuration options in the cli
+
 func getDefaultConfig() *Configuration {
 	defaultConfig := Configuration{
 		SearchTerms:             []string{"nature"},
@@ -101,6 +105,8 @@ func getDefaultConfig() *Configuration {
 		SelectionType:           "random",
 		SaveWallpaper:           false,
 		SaveWallpaperDirectory:  filepath.Join(GetIrisDir(), "wallpapers"),
+		RemoteSource:            "unsplash",
+		CheckForUpdates:         true,
 	}
 
 	return &defaultConfig

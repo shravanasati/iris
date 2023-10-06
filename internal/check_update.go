@@ -76,6 +76,11 @@ func (ri releaseInfo) display() {
 }
 
 func CheckForUpdates(currentVersion string) {
+	config := ReadConfig()
+	if !config.CheckForUpdates {
+		return
+	}
+
 	now := time.Now()
 	if !(now.Sub(getLastCheckedTime()).Hours() >= 24) {
 		// updates were checked for within 24 hours

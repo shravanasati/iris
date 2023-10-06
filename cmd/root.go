@@ -36,10 +36,10 @@ var c = internal.ReadConfig()
 func realMain() {
 	internal.ClearTemp()
 
-	// * determining if to use unsplash or local images
-	useUnsplash := false
+	// * determining if to use remote source or local images
+	useRemoteSource := false
 	if strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckFileExists(c.WallpaperDirectory) {
-		useUnsplash = true
+		useRemoteSource = true
 	}
 
 	if strings.TrimSpace(c.SaveWallpaperDirectory) == "" || !internal.CheckFileExists(c.SaveWallpaperDirectory) {
@@ -51,8 +51,8 @@ func realMain() {
 		c.Resolution = "1600x900"
 	}
 
-	// * wallpapers via unsplash
-	if useUnsplash {
+	// * wallpapers via remote source
+	if useRemoteSource {
 		if c.ChangeWallpaper {
 			duration, e := time.ParseDuration(c.ChangeWallpaperDuration)
 
@@ -60,11 +60,11 @@ func realMain() {
 				duration = time.Minute * 5
 			}
 			for {
-				c.UnsplashWallpaper()
+				c.RemoteWallpaper()
 				time.Sleep(duration)
 			}
 		} else {
-			c.UnsplashWallpaper()
+			c.RemoteWallpaper()
 		}
 
 		// * wallpapers via local directory
