@@ -7,11 +7,33 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
 var lastCheckedFilePath = filepath.Join(GetIrisDir(), "last_checked.update")
 var timeFormat = time.RFC3339
+
+const (
+	lower = iota
+	equal
+	greater
+)
+
+// Compares two semver strings of format vx.y.z.
+// Returns 1 if v1 > v2, -1 if v1 < v2, 0 if v1 == v2.
+func compareSemverStrings(v1, v2 string) int {
+	numbers1 := strings.Split(v1[1:], ".")
+	numbers2 := strings.Split(v2[1:], ".")
+	for i := 0; i < 3; i++ {
+		if numbers1[i] > numbers2[i] {
+			return greater
+		} else if numbers1[i] < numbers2[i] {
+			return lower
+		}
+	}
+	return equal
+}
 
 func getLastCheckedTime() time.Time {
 	if !CheckFileExists(lastCheckedFilePath) {
@@ -72,8 +94,7 @@ func CheckForUpdates(currentVersion string) {
 	}
 	json.Unmarshal(data, &releaseInfo)
 	writeLastCheckedTime(now)
-
-	if currentVersion == releaseInfo.TagName {
+	if compareSemverStrings(releaseInfo.TagName, currentVersion) != greater {
 		// no new version
 		return
 	}

@@ -27,6 +27,7 @@ type Configuration struct {
 }
 
 // todo refresh configuration file every minute or so
+// todo add more remote sources - github, windows spotlight
 
 func (c *Configuration) WriteConfig() {
 	configFilePath := filepath.Join(GetIrisDir(), "config.json")
