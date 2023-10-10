@@ -14,7 +14,7 @@ import (
 
 var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
 
-// SetWallpaper sets the wallpaper to the given file.
+// SetWallpaper sets the wallpaper to thegiven file.
 func SetWallpaper(filename string) error {
 	if !CheckFileExists(filename) {
 		return fmt.Errorf("the file `%s` doesn't exist", filename)
@@ -27,7 +27,14 @@ func SetWallpaper(filename string) error {
 	return wallpaper.SetFromFile(absPath)
 }
 
-// todo get wallpaper
+// Returns the current set wallpaper or the error.
+func GetWallpaper() (string) {
+	wallpaperPath, err := wallpaper.Get()
+	if err != nil {
+		return fmt.Sprintf("unable to get wallpaper: %v\n", err)
+	}
+	return wallpaperPath
+}
 
 func (c *Configuration) RemoteWallpaper() {
 	switch strings.ToLower(strings.TrimSpace(c.RemoteSource)) {
