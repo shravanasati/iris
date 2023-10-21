@@ -27,7 +27,6 @@ type Configuration struct {
 	RemoteSource            string   `json:"remote_source"`             // remote source to fetch wallpapers from
 	CheckForUpdates         bool     `json:"check_for_updates"`         // whether to check for updates
 }
-
 // todo refresh configuration file every minute or so
 // todo add more remote sources - github, windows spotlight
 
@@ -132,6 +131,5 @@ func ReadConfig() *Configuration {
 		defaultConfig.WriteConfig()
 		return defaultConfig
 	}
-
 	return &config
 }

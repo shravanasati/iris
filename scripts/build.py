@@ -135,7 +135,7 @@ def generate_checksums() -> None:
     checksum = ""
 
     for item in dist_folder.iterdir():
-        checksum += f"{hash_file(item.absolute())}  {item.name}\n"
+        checksum += f"{hash_file(str(item.absolute()))}  {item.name}\n"
 
     checksum_file = dist_folder / "checksums.txt"
     with open(str(checksum_file), 'w') as f:

@@ -11,7 +11,7 @@ import (
 
 const (
 	NAME    string = "iris"
-	VERSION string = "v0.3.1"
+	VERSION string = "v0.4.0"
 )
 
 func main() {
