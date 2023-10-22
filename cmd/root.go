@@ -38,16 +38,15 @@ func realMain() {
 
 	// * determining if to use remote source or local images
 	useRemoteSource := false
-	if strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckFileExists(c.WallpaperDirectory) {
+	if strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckPathExists(c.WallpaperDirectory) {
 		useRemoteSource = true
 	}
 
-	if strings.TrimSpace(c.SaveWallpaperDirectory) == "" || !internal.CheckFileExists(c.SaveWallpaperDirectory) {
+	if strings.TrimSpace(c.SaveWallpaperDirectory) == "" || !internal.CheckPathExists(c.SaveWallpaperDirectory) {
 		c.SaveWallpaperDirectory = filepath.Join(internal.GetIrisDir(), "wallpapers")
 	}
 
-	resolution := c.Resolution
-	if !internal.StringInSlice(resolution, internal.SupportedResolutions) {
+	if !internal.StringInSlice(c.Resolution, internal.SupportedResolutions) {
 		c.Resolution = "1600x900"
 	}
 

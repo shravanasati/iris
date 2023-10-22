@@ -25,7 +25,7 @@ func breakIntoFrames(videoPath string) (string, error) {
 		return framesLocation, er
 	}
 
-	if !CheckFileExists(framesLocation) {
+	if !CheckPathExists(framesLocation) {
 		os.Mkdir(framesLocation, os.ModePerm)
 	}
 
@@ -46,7 +46,11 @@ func breakIntoFrames(videoPath string) (string, error) {
 		return "", fmt.Errorf("unable to break video into frames. make sure you've ffmpeg installed and present on path")
 	}
 
-	if er := cache.set(videoPath, framesLocation); er != nil {
+	absPath, err := filepath.Abs(videoPath)
+	if err != nil {
+		absPath = videoPath
+	}
+	if er := cache.set(absPath, framesLocation); er != nil {
 		panic(er)
 	}
 	return framesLocation, nil
@@ -55,7 +59,7 @@ func breakIntoFrames(videoPath string) (string, error) {
 // SetVideoWallpaper sets a video as wallpaper by breaking the video into frames and then
 // changes the wallpaper every few milliseconds to imitate that wallpaper is a video.
 func SetVideoWallpaper(videoPath string) error {
-	if !CheckFileExists(videoPath) {
+	if !CheckPathExists(videoPath) {
 		return fmt.Errorf("the file `%s` is non-existent", videoPath)
 	}
 	splitted := strings.Split(videoPath, ".")

@@ -16,6 +16,7 @@ var (
 )
 
 type Configuration struct {
+	RemoteSource            string   `json:"remote_source"`             // remote source to fetch wallpapers from
 	SearchTerms             []string `json:"search_terms"`              // wallpaper search terms for unsplash
 	Resolution              string   `json:"resolution"`                // wallpaper resolution, defaults to 1600x900
 	ChangeWallpaper         bool     `json:"change_wallpaper"`          // whether change wallpaper after a duration
@@ -24,9 +25,9 @@ type Configuration struct {
 	SelectionType           string   `json:"selection_type"`            // directory wallpaper selection type, either sorted or random
 	SaveWallpaper           bool     `json:"save_wallpaper"`            // whether to save the used wallpapers or not
 	SaveWallpaperDirectory  string   `json:"save_wallpaper_directory"`  // directory to save the used wallpapers
-	RemoteSource            string   `json:"remote_source"`             // remote source to fetch wallpapers from
 	CheckForUpdates         bool     `json:"check_for_updates"`         // whether to check for updates
 }
+
 // todo refresh configuration file every minute or so
 // todo add more remote sources - github, windows spotlight
 
@@ -77,14 +78,14 @@ func GetIrisDir() string {
 	// * determining iris's directory
 	dir := filepath.Join(usr.HomeDir, ".iris")
 
-	if !CheckFileExists(dir) {
+	if !CheckPathExists(dir) {
 		os.Mkdir(dir, os.ModePerm)
 	}
 
 	subDirs := []string{"wallpapers", "temp", "cache"}
 	for _, subDir := range subDirs {
 		dirPath := filepath.Join(dir, subDir)
-		if !CheckFileExists(dirPath) {
+		if !CheckPathExists(dirPath) {
 			os.Mkdir(dirPath, os.ModePerm)
 		}
 	}
@@ -116,7 +117,7 @@ func ReadConfig() *Configuration {
 
 	configFilePath := filepath.Join(GetIrisDir(), "config.json")
 
-	if !CheckFileExists(configFilePath) {
+	if !CheckPathExists(configFilePath) {
 		defaultConfig := getDefaultConfig()
 
 		defaultConfig.WriteConfig()

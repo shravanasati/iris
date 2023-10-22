@@ -28,12 +28,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// setCmd represents the set command
+// getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get the current wallpaper.",
 	Long: `Get the current set desktop wallpaper.
-For example:
+Example:
 $ iris get
 `,
 	Run: func(cmd *cobra.Command, args []string) {

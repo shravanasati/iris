@@ -16,7 +16,7 @@ var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
 
 // SetWallpaper sets the wallpaper to thegiven file.
 func SetWallpaper(filename string) error {
-	if !CheckFileExists(filename) {
+	if !CheckPathExists(filename) {
 		return fmt.Errorf("the file `%s` doesn't exist", filename)
 	}
 
@@ -28,7 +28,7 @@ func SetWallpaper(filename string) error {
 }
 
 // Returns the current set wallpaper or the error.
-func GetWallpaper() (string) {
+func GetWallpaper() string {
 	wallpaperPath, err := wallpaper.Get()
 	if err != nil {
 		return fmt.Sprintf("unable to get wallpaper: %v\n", err)
@@ -36,6 +36,7 @@ func GetWallpaper() (string) {
 	return wallpaperPath
 }
 
+// RemoteWallpaper dispatches the appropriate function to change wallpaper.
 func (c *Configuration) RemoteWallpaper() {
 	switch strings.ToLower(strings.TrimSpace(c.RemoteSource)) {
 	case "unsplash":

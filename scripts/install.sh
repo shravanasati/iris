@@ -5,7 +5,8 @@
 # Quick install: `curl https://raw.githubusercontent.com/Shravan-1908/iris/main/scripts/install.sh | bash`
 #
 # Acknowledgments:
-#   - getmic.ro: https://github.com/zyedidia/eget
+#   - https://github.com/zyedidia/eget
+#   - https://github.com/burntsushi/ripgrep
 
 set -e -u
 

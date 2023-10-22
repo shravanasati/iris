@@ -36,7 +36,7 @@ func compareSemverStrings(v1, v2 string) int {
 }
 
 func getLastCheckedTime() time.Time {
-	if !CheckFileExists(lastCheckedFilePath) {
+	if !CheckPathExists(lastCheckedFilePath) {
 		lastCheckedFile, err := os.Create(lastCheckedFilePath)
 		if err != nil {
 			panic("unable to create the last checked file")
