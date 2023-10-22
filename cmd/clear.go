@@ -13,13 +13,11 @@ import (
 // clearCmd represents the clear command
 var clearCmd = &cobra.Command{
 	Use:   "clear",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Clear the entire cache.",
+	Long: `The clear command effectively deletes all caches and their references.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Example:
+$ iris cache clear`,
 	Run: func(cmd *cobra.Command, args []string) {
 		err := internal.CacheEmpty()
 		if err != nil {

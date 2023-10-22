@@ -34,7 +34,6 @@ func (c *cache) get(videoPath string) (string, error) {
 		delete(c.data, videoPath) // in case checkfilexists reports false
 		return "", fmt.Errorf("didn't find %v in cache", videoPath)
 	}
-	// todo add logic to check for LastMtime
 	return value.FramesFolderPath, nil
 }
 
@@ -48,6 +47,10 @@ func (c *cache) set(videoPath, framesLocation string) error {
 		LastMtime:        fileInfo.ModTime().Format(timeFormat),
 	}
 
+	return c.write()
+}
+
+func (c *cache) write() error {
 	f, err := os.Create(c.location)
 	if err != nil {
 		return err
@@ -85,7 +88,7 @@ func CacheSize() ByteSize {
 		if err != nil {
 			return err
 		}
-		if !info.IsDir() && filepath.Ext(info.Name()) != "json" {
+		if !info.IsDir() && filepath.Ext(info.Name()) != ".json" {
 			size += info.Size()
 		}
 		return nil
@@ -119,6 +122,15 @@ func CacheEmpty() error {
 				return err
 			}
 		}
+	}
+
+	// remove all references from cache.json
+	ca := &cache{
+		location: filepath.Join(cacheLocation, "cache.json"),
+		data: cacheEntryMap{},
+	}
+	if err = ca.write(); err != nil {
+		return err
 	}
 
 	return nil
