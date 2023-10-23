@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/olekukonko/tablewriter"
 )
 
 type cacheEntry struct {
@@ -127,11 +129,25 @@ func CacheEmpty() error {
 	// remove all references from cache.json
 	ca := &cache{
 		location: filepath.Join(cacheLocation, "cache.json"),
-		data: cacheEntryMap{},
+		data:     cacheEntryMap{},
 	}
 	if err = ca.write(); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func CacheShow() {
+	ca := loadCache()
+	tableData := [][]string{}
+	i := 1
+	for videoPath := range ca.data {
+		tableData = append(tableData, []string{fmt.Sprintf("%v", i), videoPath})
+		i++
+	}
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"S. No.", "Video"})
+	table.AppendBulk(tableData)
+	table.Render()
 }

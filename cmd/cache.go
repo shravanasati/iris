@@ -1,12 +1,9 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -14,16 +11,20 @@ import (
 var cacheCmd = &cobra.Command{
 	Use:   "cache",
 	Short: "Manage iris cache data.",
-	Long: `The current way video wallpapers are implemented in iris using ffmpeg, which
+	Long: `The current way video wallpapers are implemented in iris is using ffmpeg, which
 converts a given video into several thousand frames, and stores them in the cache folder.
 
-The cache command thus provides the access to manage this cache.
+The cache command provides the access to manage this cache.
 
 Examples:
-// todo add cache cmd examples here
+$ iris cache size
+$ iris cache list
+$ iris cache clear
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("cache called")
+		if len(args) == 0 {
+			cmd.Help()
+		}
 	},
 }
 

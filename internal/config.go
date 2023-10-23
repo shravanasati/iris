@@ -134,3 +134,5 @@ func ReadConfig() *Configuration {
 	}
 	return &config
 }
+
+// todo rewrite existing config with new options
