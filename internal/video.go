@@ -64,7 +64,7 @@ func SetVideoWallpaper(videoPath string) error {
 	}
 	splitted := strings.Split(videoPath, ".")
 	ext := splitted[len(splitted)-1]
-	if !StringInSlice(ext, []string{"mp4", "mkv"}) {
+	if !ItemInSlice(ext, []string{"mp4", "mkv"}) {
 		return fmt.Errorf("the file `%s` is either unsupported or not a valid video file", videoPath)
 	}
 

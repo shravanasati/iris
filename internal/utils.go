@@ -50,7 +50,8 @@ func (b ByteSize) String() string {
 	return fmt.Sprintf("%.2fB", b)
 }
 
-func StringInSlice(s string, slice []string) bool {
+// Checks whether the given item exists in the slice.
+func ItemInSlice[T comparable](s T, slice []T) bool {
 	for _, v := range slice {
 		if v == s {
 			return true
@@ -60,17 +61,22 @@ func StringInSlice(s string, slice []string) bool {
 	return false
 }
 
+// Returns a random element from the given slice.
 func randomChoice[T any](slice []T) T {
 	randGen := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	return slice[randGen.Intn(len(slice))]
 }
 
+// Checks whether a given path exists.
 func CheckPathExists(filePath string) bool {
 	_, e := os.Stat(filePath)
 	return !os.IsNotExist(e)
 }
 
+// Downloads the image from the given URL. `temp` parameter is used to determine where to save the
+// downloaded image. 
+// Returns filepath to the downloaded image and a error, if any.
 func downloadImage(url string, temp bool) (string, error) {
 	res, err := http.Get(url)
 	if err != nil {
@@ -127,6 +133,7 @@ func readFile(file string) string {
 	return text
 }
 
+// jsonifies the given data
 func jsonify(data any) []byte {
 	byteArray, err := json.MarshalIndent(data, "", "    ")
 	if err != nil {

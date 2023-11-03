@@ -129,7 +129,7 @@ func (c *Configuration) getValidWallpapers() []string {
 			continue
 		}
 		ext := strings.ToLower(splitted[len(splitted)-1])
-		if StringInSlice(ext, validImageExtensions) {
+		if ItemInSlice(ext, validImageExtensions) {
 			contents = append(contents, filepath.Join(c.WallpaperDirectory, f.Name()))
 		}
 	}
