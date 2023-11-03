@@ -94,7 +94,6 @@ func GetIrisDir() string {
 	return dir
 }
 
-
 func getDefaultConfig() *Configuration {
 	defaultConfig := Configuration{
 		SearchTerms:             []string{"nature"},
@@ -136,3 +135,5 @@ func ReadConfig() *Configuration {
 }
 
 // todo rewrite existing config with new options
+// in ReadConfig use prepareConfig function to unmarshal into a map and then add those
+// options if they dont exist

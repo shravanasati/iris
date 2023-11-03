@@ -75,7 +75,7 @@ func CheckPathExists(filePath string) bool {
 }
 
 // Downloads the image from the given URL. `temp` parameter is used to determine where to save the
-// downloaded image. 
+// downloaded image.
 // Returns filepath to the downloaded image and a error, if any.
 func downloadImage(url string, temp bool) (string, error) {
 	res, err := http.Get(url)
