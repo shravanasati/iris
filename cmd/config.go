@@ -33,10 +33,11 @@ var configCmd = &cobra.Command{
 	
 Examples:
 
-$ iris config --save-wallpaper
-$ iris config --wallpaper-directory /home/user/Pictures/Wallpapers
+$ iris config --remote-source spotlight
 $ iris config --search-terms landscape,nature
-$ iris config --change-wallpaper=false  
+$ iris config --save-wallpaper[=false]
+$ iris config --wallpaper-directory /home/user/Pictures/Wallpapers
+$ iris config --change-wallpaper[=false]
 $ iris config --resolution 1920x1080
 $ iris config list
 
@@ -48,6 +49,10 @@ $ iris config list
 
 func init() {
 	rootCmd.AddCommand(configCmd)
+
+	configCmd.Flags().StringVar(&c.RemoteSource, "remote-source", c.RemoteSource, "Remote source to select wallpapers from. Valid options are: unsplash, spotlight, github.")
+
+	configCmd.Flags().BoolVar(&c.CheckForUpdates, "check-for-updates", c.CheckForUpdates, "Whether to check for updates of iris from github.")
 
 	configCmd.Flags().BoolVarP(&c.ChangeWallpaper, "change-wallpaper", "c", c.ChangeWallpaper, "Whether to change wallpapers continuosly in the background.")
 

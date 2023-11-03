@@ -28,8 +28,7 @@ type Configuration struct {
 	CheckForUpdates         bool     `json:"check_for_updates"`         // whether to check for updates
 }
 
-// todo refresh configuration file every minute or so
-// todo add more remote sources - github, windows spotlight
+// todo add more remote sources - github
 
 func (c *Configuration) WriteConfig() {
 	configFilePath := filepath.Join(GetIrisDir(), "config.json")
@@ -52,6 +51,7 @@ func (c *Configuration) Show() {
 
 	data := [][]string{
 		{"Search Terms", searchTerms},
+		{"Remote Source", c.RemoteSource},
 		{"Resolution", c.Resolution},
 		{"Change Wallpaper", fmt.Sprintf("%v", c.ChangeWallpaper)},
 		{"Change Wallpaper Duration", c.ChangeWallpaperDuration},
@@ -59,6 +59,7 @@ func (c *Configuration) Show() {
 		{"Selection Type", c.SelectionType},
 		{"Save Wallpaper", fmt.Sprintf("%v", c.SaveWallpaper)},
 		{"Save Wallpaper Directory", c.SaveWallpaperDirectory},
+		{"Check for Updates", fmt.Sprintf("%v", c.CheckForUpdates)},
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
@@ -93,7 +94,6 @@ func GetIrisDir() string {
 	return dir
 }
 
-// todo add new configuration options in the cli
 
 func getDefaultConfig() *Configuration {
 	defaultConfig := Configuration{
