@@ -60,7 +60,7 @@ func StringInSlice(s string, slice []string) bool {
 	return false
 }
 
-func randomChoice(slice []string) string {
+func randomChoice[T any](slice []T) T {
 	randGen := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	return slice[randGen.Intn(len(slice))]

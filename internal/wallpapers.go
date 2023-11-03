@@ -2,14 +2,21 @@ package internal
 
 import (
 	"fmt"
-	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/Shravan-1908/go-wallpaper"
+)
+
+const (
+	SpotlightDomain = "https://windows10spotlight.com"
+	SearchEndpoint  = "/tag"
 )
 
 var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
@@ -59,32 +66,52 @@ func (c *Configuration) unsplashWallpaper() {
 	searchTerms := strings.Join(c.SearchTerms, ",")
 
 	url := fmt.Sprintf("https://source.unsplash.com/%v/?%v", c.Resolution, searchTerms)
-
-	if !c.SaveWallpaper {
-		f, e := downloadImage(url, true)
-		if e != nil {
-			fmt.Println(e)
-		} else {
-			if se := SetWallpaper(f); se != nil {
-				fmt.Println(se.Error())
-				os.Exit(1)
-			}
-		}
+	f, e := downloadImage(url, !c.SaveWallpaper)
+	if e != nil {
+		fmt.Println(e)
 	} else {
-		f, e := downloadImage(url, false)
-		if e != nil {
-			fmt.Println(e)
-		} else {
-			if se := SetWallpaper(f); se != nil {
-				fmt.Println(se.Error())
-				os.Exit(1)
-			}
+		if se := SetWallpaper(f); se != nil {
+			fmt.Println(se.Error())
+			os.Exit(1)
 		}
 	}
 }
 
 func (c *Configuration) windowsSpotlightWallpaper() {
-	// searchTerms := strings.Join(c.SearchTerms, ",")
+	searchTerms := strings.Join(c.SearchTerms, "+")
+	url := SpotlightDomain + SearchEndpoint + "/" + searchTerms
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println("Unable to load page:", url)
+		return
+	}
+	defer resp.Body.Close()
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		fmt.Println("Unable to parse html document from windows10spotlight")
+		return
+	}
+	var links []string
+	resolutionRegex := regexp.MustCompile(`-\d+x\d+`)
+	doc.Find("img").Each(func(_ int, s *goquery.Selection) {
+		src, exists := s.Attr("src")
+		if exists && strings.Contains(src, "windows10spotlight") {
+			link := resolutionRegex.ReplaceAllString(src, "")
+			links = append(links, link)
+		}
+	})
+
+	selectedURL := randomChoice(links)
+	f, err := downloadImage(selectedURL, !c.SaveWallpaper)
+	if err != nil {
+		fmt.Println("Unable to download image:", selectedURL)
+		return
+	}
+	if err := SetWallpaper(f); err != nil {
+		fmt.Println("Unable to set wallpaper:", err)
+		os.Exit(1)
+	}
 }
 
 func (c *Configuration) githubRepoWallpaper() {}
@@ -168,7 +195,7 @@ func (c *Configuration) DirectoryWallpaper() {
 
 // ClearTemp deletes all the wallpapers present in ~/.iris/temp.
 func ClearTemp() {
-	tempContents, er := ioutil.ReadDir(filepath.Join(GetIrisDir(), "temp"))
+	tempContents, er := os.ReadDir(filepath.Join(GetIrisDir(), "temp"))
 	if er != nil {
 		fmt.Println(er)
 		panic("unable to get ~/.iris/temp contents")
