@@ -28,7 +28,7 @@ type Configuration struct {
 	CheckForUpdates         bool     `json:"check_for_updates"`         // whether to check for updates
 }
 
-// todo add more remote sources - github
+// todo add more remote sources - github, reddit
 
 func (c *Configuration) WriteConfig() {
 	configFilePath := filepath.Join(GetIrisDir(), "config.json")

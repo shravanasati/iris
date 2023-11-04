@@ -15,8 +15,13 @@ import (
 )
 
 const (
-	SpotlightDomain = "https://windows10spotlight.com"
-	SearchEndpoint  = "/tag"
+	spotlightDomain = "https://windows10spotlight.com"
+	searchEndpoint  = "/tag"
+)
+
+var (
+	// matches a remote github folder
+	githubRegex = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d]+){2}\/tree(\/[\w\-_\d]+){1,}$`)
 )
 
 var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
@@ -45,18 +50,17 @@ func GetWallpaper() string {
 
 // RemoteWallpaper dispatches the appropriate function to change wallpaper.
 func (c *Configuration) RemoteWallpaper() {
-	switch strings.ToLower(strings.TrimSpace(c.RemoteSource)) {
-	case "unsplash":
+	remoteSource := strings.ToLower(strings.TrimSpace(c.RemoteSource)) 
+	if remoteSource == "unsplash" {
 		c.unsplashWallpaper()
-	case "spotlight":
+	} else if remoteSource == "spotlight" {
 		c.windowsSpotlightWallpaper()
-	// todo match github url regex here
-	case "github":
+	} else if githubRegex.Match([]byte(remoteSource)) {
 		c.githubRepoWallpaper()
-	default:
+	} else {
 		// todo edit readme about new config options - remote source and check for updates
 		// todo link to remote source docs here
-		fmt.Printf("Invalid remote source `%s`, defaulting to unsplash. Know more about iris configuration at https://github.com/Shravan-1908/iris#customization \n", c.RemoteSource)
+		fmt.Printf("Invalid remote source `%s`, defaulting to unsplash. Know more about iris remote source configuration at https://github.com/Shravan-1908/iris#customization \n", c.RemoteSource)
 		c.unsplashWallpaper()
 	}
 }
@@ -79,7 +83,7 @@ func (c *Configuration) unsplashWallpaper() {
 
 func (c *Configuration) windowsSpotlightWallpaper() {
 	searchTerms := strings.Join(c.SearchTerms, "+")
-	url := SpotlightDomain + SearchEndpoint + "/" + searchTerms
+	url := spotlightDomain + searchEndpoint + "/" + searchTerms
 	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Println("Unable to load page:", url)
@@ -114,7 +118,9 @@ func (c *Configuration) windowsSpotlightWallpaper() {
 	}
 }
 
-func (c *Configuration) githubRepoWallpaper() {}
+func (c *Configuration) githubRepoWallpaper() {
+	fmt.Println("github repo wallpaper")
+}
 
 func (c *Configuration) getValidWallpapers() []string {
 	contents := []string{}
