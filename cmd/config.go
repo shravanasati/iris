@@ -70,4 +70,6 @@ func init() {
 
 	configCmd.Flags().StringSliceVarP(&c.SearchTerms, "search-terms", "q", c.SearchTerms, "The search terms for unsplash wallpapers.")
 
+	configCmd.Flags().StringVar(&c.GitHubAPIToken, "github-token", c.GitHubAPIToken, "The GitHub API token, used to perform authorized requests.")
+
 }

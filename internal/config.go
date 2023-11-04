@@ -26,6 +26,7 @@ type Configuration struct {
 	SaveWallpaper           bool     `json:"save_wallpaper"`            // whether to save the used wallpapers or not
 	SaveWallpaperDirectory  string   `json:"save_wallpaper_directory"`  // directory to save the used wallpapers
 	CheckForUpdates         bool     `json:"check_for_updates"`         // whether to check for updates
+	GitHubAPIToken          string   `json:"github_api_token"`          // github api token to perform auth requests
 }
 
 // todo add more remote sources - github, reddit
@@ -60,6 +61,7 @@ func (c *Configuration) Show() {
 		{"Save Wallpaper", fmt.Sprintf("%v", c.SaveWallpaper)},
 		{"Save Wallpaper Directory", c.SaveWallpaperDirectory},
 		{"Check for Updates", fmt.Sprintf("%v", c.CheckForUpdates)},
+		{"GitHub API Token", c.GitHubAPIToken},
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
@@ -106,6 +108,7 @@ func getDefaultConfig() *Configuration {
 		SaveWallpaperDirectory:  filepath.Join(GetIrisDir(), "wallpapers"),
 		RemoteSource:            "unsplash",
 		CheckForUpdates:         true,
+		GitHubAPIToken: "",
 	}
 
 	return &defaultConfig

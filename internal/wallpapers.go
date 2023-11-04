@@ -20,8 +20,11 @@ const (
 )
 
 var (
+	resolutionRegex = regexp.MustCompile(`-\d+x\d+`)
 	// matches a remote github folder
-	githubRegex = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d]+){2}\/tree(\/[\w\-_\d]+){1,}$`)
+	githubRegex          = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d]+){2}\/tree(\/[\w\-_\d]+){1,}$`)
+	protocolRegex        = regexp.MustCompile(`(http(s)*:(\/){2})`)
+	getParamsGithubRegex = regexp.MustCompile(`(?i)^github\.com/([^/]+)/([^/]+)/tree/([^/]+)/(.+)$`)
 )
 
 var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
@@ -50,54 +53,60 @@ func GetWallpaper() string {
 
 // RemoteWallpaper dispatches the appropriate function to change wallpaper.
 func (c *Configuration) RemoteWallpaper() {
-	remoteSource := strings.ToLower(strings.TrimSpace(c.RemoteSource)) 
+	remoteSource := strings.ToLower(strings.TrimSpace(c.RemoteSource))
 	if remoteSource == "unsplash" {
-		c.unsplashWallpaper()
+		if err := c.unsplashWallpaper(); err != nil {
+			fmt.Println(err)
+		}
 	} else if remoteSource == "spotlight" {
-		c.windowsSpotlightWallpaper()
+		if err := c.windowsSpotlightWallpaper(); err != nil {
+			fmt.Println(err)
+		}
 	} else if githubRegex.Match([]byte(remoteSource)) {
-		c.githubRepoWallpaper()
+		if err := c.githubRepoWallpaper(); err != nil {
+			fmt.Println(err)
+		}
 	} else {
 		// todo edit readme about new config options - remote source and check for updates
 		// todo link to remote source docs here
 		fmt.Printf("Invalid remote source `%s`, defaulting to unsplash. Know more about iris remote source configuration at https://github.com/Shravan-1908/iris#customization \n", c.RemoteSource)
-		c.unsplashWallpaper()
+		if err := c.unsplashWallpaper(); err != nil {
+			fmt.Println(err)
+		}
 	}
 }
 
 // unsplashWallpaper changes the wallpaper using unsplash.
-func (c *Configuration) unsplashWallpaper() {
+func (c *Configuration) unsplashWallpaper() error {
 	searchTerms := strings.Join(c.SearchTerms, ",")
 
 	url := fmt.Sprintf("https://source.unsplash.com/%v/?%v", c.Resolution, searchTerms)
 	f, e := downloadImage(url, !c.SaveWallpaper)
 	if e != nil {
-		fmt.Println(e)
+		return e
 	} else {
 		if se := SetWallpaper(f); se != nil {
-			fmt.Println(se.Error())
-			os.Exit(1)
+			return se
 		}
 	}
+	return nil
 }
 
-func (c *Configuration) windowsSpotlightWallpaper() {
+func (c *Configuration) windowsSpotlightWallpaper() error {
 	searchTerms := strings.Join(c.SearchTerms, "+")
 	url := spotlightDomain + searchEndpoint + "/" + searchTerms
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Unable to load page:", url)
-		return
+		return fmt.Errorf("Unable to load page: %s, error: %v", url, err)
 	}
 	defer resp.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		fmt.Println("Unable to parse html document from windows10spotlight")
-		return
+		return fmt.Errorf("Unable to parse html document from windows10spotlight: %v", err)
 	}
+
 	var links []string
-	resolutionRegex := regexp.MustCompile(`-\d+x\d+`)
 	doc.Find("img").Each(func(_ int, s *goquery.Selection) {
 		src, exists := s.Attr("src")
 		if exists && strings.Contains(src, "windows10spotlight") {
@@ -109,17 +118,61 @@ func (c *Configuration) windowsSpotlightWallpaper() {
 	selectedURL := randomChoice(links)
 	f, err := downloadImage(selectedURL, !c.SaveWallpaper)
 	if err != nil {
-		fmt.Println("Unable to download image:", selectedURL)
-		return
+		return fmt.Errorf("Unable to download image: %s", selectedURL)
 	}
 	if err := SetWallpaper(f); err != nil {
-		fmt.Println("Unable to set wallpaper:", err)
-		os.Exit(1)
+		return fmt.Errorf("Unable to set wallpaper: %s", err)
 	}
+	return nil
 }
 
-func (c *Configuration) githubRepoWallpaper() {
-	fmt.Println("github repo wallpaper")
+func getGithubAPIURL(ghRepoFolderURL string) (string, error) {
+	if protocolRegex.Match([]byte(strings.ToLower(ghRepoFolderURL))) {
+		ghRepoFolderURL = protocolRegex.ReplaceAllLiteralString(ghRepoFolderURL, "")
+	}
+	matches := getParamsGithubRegex.FindStringSubmatch(ghRepoFolderURL)
+	var owner, repo, branch, folderPath string
+	if len(matches) == 5 {
+		owner = matches[1]
+		repo = matches[2]
+		branch = matches[3]
+		folderPath = matches[4]
+	} else {
+		return "", fmt.Errorf("Invalid remote source: %s. Check your github URL.", ghRepoFolderURL)
+	}
+	preparedURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s?ref=%s", owner, repo, folderPath, branch)
+	return preparedURL, nil
+}
+
+func (c *Configuration) githubRepoWallpaper() error {
+	repoFolderURL := c.RemoteSource
+	preparedURL, err := getGithubAPIURL(repoFolderURL)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, preparedURL, nil)
+	if err != nil {
+		return err
+	}
+
+	// retrieve gh api token from config
+	ghToken := c.GitHubAPIToken
+	// if failed lookup environment variable
+	if ghToken == "" {
+		ghToken = os.Getenv("IRIS_GH_TOKEN")
+	}
+	// if gh token is present, add header to url
+	if ghToken != "" {
+		req.Header.Add("Authorization", "token " + ghToken)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	// todo handle response here -> its json of file contents
+	return nil
 }
 
 func (c *Configuration) getValidWallpapers() []string {
