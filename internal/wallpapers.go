@@ -166,7 +166,7 @@ func (c *Configuration) githubRepoWallpaper() error {
 	if ghToken == "" {
 		ghToken = os.Getenv("IRIS_GH_TOKEN")
 	}
-	// if gh token is present, add header to url
+	// if gh token is present, add header to the request
 	if ghToken != "" {
 		req.Header.Add("Authorization", "token "+ghToken)
 	}
@@ -175,6 +175,9 @@ func (c *Configuration) githubRepoWallpaper() error {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("recieved non 200 status code from the api: %v", resp.Status)
 	}
 	defer resp.Body.Close()
 
@@ -205,6 +208,8 @@ func (c *Configuration) githubRepoWallpaper() error {
 	}
 	return nil
 }
+
+// todo add docstring for functions
 
 func (c *Configuration) getValidWallpapers() []string {
 	contents := []string{}
