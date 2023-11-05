@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -8,12 +9,14 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"sort"
 	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/Shravan-1908/go-wallpaper"
+	"github.com/vartanbeno/go-reddit/v2/reddit"
 )
 
 const (
@@ -23,9 +26,13 @@ const (
 
 var (
 	resolutionRegex = regexp.MustCompile(`-\d+x\d+`)
+	protocolRegex   = regexp.MustCompile(`(?i)(http(s)*:(\/){2})`)
+
+	// matches subreddits like r/sub1, r/sub1+sub2+sub3
+	redditRegex = regexp.MustCompile(`^r/[\w\d_]{3,20}(?:\+[\w\d_]{3,20})*$`)
+
 	// matches a remote github folder
 	githubRegex          = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d]+){2}\/tree(\/[\w\-_\d]+){1,}$`)
-	protocolRegex        = regexp.MustCompile(`(http(s)*:(\/){2})`)
 	getParamsGithubRegex = regexp.MustCompile(`(?i)^github\.com/([^/]+)/([^/]+)/tree/([^/]+)/(.+)$`)
 )
 
@@ -62,6 +69,10 @@ func (c *Configuration) RemoteWallpaper() {
 		}
 	} else if remoteSource == "spotlight" {
 		if err := c.windowsSpotlightWallpaper(); err != nil {
+			fmt.Println(err)
+		}
+	} else if redditRegex.Match([]byte(remoteSource)) {
+		if err := c.redditWallpaper(); err != nil {
 			fmt.Println(err)
 		}
 	} else if githubRegex.Match([]byte(remoteSource)) {
@@ -201,11 +212,24 @@ func (c *Configuration) githubRepoWallpaper() error {
 	if err != nil {
 		return err
 	}
-	
+
 	// set downloaded image as wallpaper
 	if err = SetWallpaper(f); err != nil {
 		return err
 	}
+	return nil
+}
+
+func (c *Configuration) redditWallpaper() error {
+	userAgent := fmt.Sprintf("%v:iris-%v:v0.4.0 (by /u/%v)", runtime.GOOS, _UUID, _UUID)
+	client, err := reddit.NewReadonlyClient(reddit.WithUserAgent(userAgent))
+	if err != nil {
+		return err
+	}
+	subredditName := strings.Replace(strings.ToLower(c.RemoteSource), "r/", "", 1)
+	// posts, _, err := client.Subreddit.
+	// todo match reddit similar to github, r/wallpapers/top?t=all&limit=50
+
 	return nil
 }
 

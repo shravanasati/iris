@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type ByteSize float64
@@ -27,6 +29,8 @@ const (
 	ZB
 	YB
 )
+
+var _UUID string
 
 func (b ByteSize) String() string {
 	switch {
@@ -140,4 +144,22 @@ func jsonify(data any) []byte {
 		panic(err)
 	}
 	return (byteArray)
+}
+
+func setupUUID() {
+	uuidFilepath := filepath.Join(GetIrisDir(), "uuid")
+	if CheckPathExists(uuidFilepath) {
+		_UUID = readFile(uuidFilepath)
+	} else {
+		_UUID = uuid.New().String()
+		uuidFile, err := os.Create(uuidFilepath)
+		if err != nil {
+			fmt.Println("unable to create uuid file")
+			os.Exit(1)
+		}
+		if _, err = uuidFile.WriteString(_UUID); err != nil {
+			fmt.Println("unable to write uuid")
+			os.Exit(1)
+		}
+	}
 }
