@@ -1,7 +1,9 @@
 package internal
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -97,13 +99,13 @@ func (c *Configuration) windowsSpotlightWallpaper() error {
 	url := spotlightDomain + searchEndpoint + "/" + searchTerms
 	resp, err := http.Get(url)
 	if err != nil {
-		return fmt.Errorf("Unable to load page: %s, error: %v", url, err)
+		return fmt.Errorf("unable to load page: %s, error: %v", url, err)
 	}
 	defer resp.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		return fmt.Errorf("Unable to parse html document from windows10spotlight: %v", err)
+		return fmt.Errorf("unable to parse html document from windows10spotlight: %v", err)
 	}
 
 	var links []string
@@ -118,10 +120,10 @@ func (c *Configuration) windowsSpotlightWallpaper() error {
 	selectedURL := randomChoice(links)
 	f, err := downloadImage(selectedURL, !c.SaveWallpaper)
 	if err != nil {
-		return fmt.Errorf("Unable to download image: %s", selectedURL)
+		return fmt.Errorf("unable to download image: %s", selectedURL)
 	}
 	if err := SetWallpaper(f); err != nil {
-		return fmt.Errorf("Unable to set wallpaper: %s", err)
+		return fmt.Errorf("unable to set wallpaper: %s", err)
 	}
 	return nil
 }
@@ -138,11 +140,13 @@ func getGithubAPIURL(ghRepoFolderURL string) (string, error) {
 		branch = matches[3]
 		folderPath = matches[4]
 	} else {
-		return "", fmt.Errorf("Invalid remote source: %s. Check your github URL.", ghRepoFolderURL)
+		return "", fmt.Errorf("invalid remote source: %s. check your github URL", ghRepoFolderURL)
 	}
 	preparedURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s?ref=%s", owner, repo, folderPath, branch)
 	return preparedURL, nil
 }
+
+// todo add option to backup github repo results
 
 func (c *Configuration) githubRepoWallpaper() error {
 	repoFolderURL := c.RemoteSource
@@ -164,14 +168,41 @@ func (c *Configuration) githubRepoWallpaper() error {
 	}
 	// if gh token is present, add header to url
 	if ghToken != "" {
-		req.Header.Add("Authorization", "token " + ghToken)
+		req.Header.Add("Authorization", "token "+ghToken)
 	}
 
+	// get response from api
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
-	// todo handle response here -> its json of file contents
+	defer resp.Body.Close()
+
+	// read response, and unmarshal it
+	jsonData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	var recvData []map[string]any
+	if err = json.Unmarshal(jsonData, &recvData); err != nil {
+		return err
+	}
+
+	// download image
+	choice := randomChoice(recvData)["download_url"]
+	downloadURL, ok := choice.(string)
+	if !ok {
+		return fmt.Errorf("unable to assert string type onto download url: %v", choice)
+	}
+	f, err := downloadImage(downloadURL, !c.SaveWallpaper)
+	if err != nil {
+		return err
+	}
+	
+	// set downloaded image as wallpaper
+	if err = SetWallpaper(f); err != nil {
+		return err
+	}
 	return nil
 }
 
