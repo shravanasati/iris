@@ -60,6 +60,8 @@ func GetWallpaper() string {
 	return wallpaperPath
 }
 
+// todo add logs
+
 // RemoteWallpaper dispatches the appropriate function to change wallpaper.
 func (c *Configuration) RemoteWallpaper() {
 	remoteSource := strings.ToLower(strings.TrimSpace(c.RemoteSource))
@@ -106,6 +108,7 @@ func (c *Configuration) unsplashWallpaper() error {
 }
 
 func (c *Configuration) windowsSpotlightWallpaper() error {
+	// todo if search terms are zero, tag wont work. use base url instead
 	searchTerms := strings.Join(c.SearchTerms, "+")
 	url := spotlightDomain + searchEndpoint + "/" + searchTerms
 	resp, err := http.Get(url)
