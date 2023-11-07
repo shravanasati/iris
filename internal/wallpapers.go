@@ -224,13 +224,25 @@ func (c *Configuration) githubRepoWallpaper() error {
 }
 
 func (c *Configuration) redditWallpaper() error {
-	userAgent := fmt.Sprintf("%v:iris-%v:v0.4.0 (by /u/%v)", runtime.GOOS, _UUID, _UUID)
+	userAgent := fmt.Sprintf("%v:iris-%v:v0.4.0 (by /u/%v)", runtime.GOOS, _UUID[:6], _UUID[:6])
 	client, err := reddit.NewReadonlyClient(reddit.WithUserAgent(userAgent))
 	if err != nil {
 		return err
 	}
 	subredditName := strings.Replace(strings.ToLower(c.RemoteSource), "r/", "", 1)
-	// posts, _, err := client.Subreddit.
+	posts, _, err := client.Subreddit.TopPosts(context.Background(), subredditName, &reddit.ListPostOptions{Time: "all"})
+	if err != nil {
+		return err
+	}
+	f, err := downloadImage(randomChoice(posts).URL, !c.SaveWallpaper)
+	if err != nil {
+		return err
+	}
+	err = SetWallpaper(f)
+	if err != nil {
+		return err
+	}
+	// todo how to download gallery posts
 	// todo match reddit similar to github, r/wallpapers/top?t=all&limit=50
 
 	return nil
