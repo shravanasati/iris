@@ -108,20 +108,29 @@ func (c *Configuration) unsplashWallpaper() error {
 }
 
 func (c *Configuration) windowsSpotlightWallpaper() error {
-	// todo if search terms are zero, tag wont work. use base url instead
-	searchTerms := strings.Join(c.SearchTerms, "+")
-	url := spotlightDomain + searchEndpoint + "/" + searchTerms
+	// determine the url to hit
+	var url string
+	if len(c.SearchTerms) == 0 {
+		url = spotlightDomain
+	} else {
+		searchTerms := strings.Join(c.SearchTerms, "+")
+		url = spotlightDomain + searchEndpoint + "/" + searchTerms
+	}
+
+	// send a get request
 	resp, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("unable to load page: %s, error: %v", url, err)
 	}
 	defer resp.Body.Close()
 
+	// parse the html content
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return fmt.Errorf("unable to parse html document from windows10spotlight: %v", err)
 	}
 
+	// find image links
 	var links []string
 	doc.Find("img").Each(func(_ int, s *goquery.Selection) {
 		src, exists := s.Attr("src")
@@ -131,6 +140,11 @@ func (c *Configuration) windowsSpotlightWallpaper() error {
 		}
 	})
 
+	if len(links) == 0 {
+		return fmt.Errorf("unable to find any image link on url=%v", url)
+	}
+
+	// select a random image, download it, and set it as wallpaper
 	selectedURL := randomChoice(links)
 	f, err := downloadImage(selectedURL, !c.SaveWallpaper)
 	if err != nil {
