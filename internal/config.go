@@ -29,7 +29,6 @@ type Configuration struct {
 	GitHubAPIToken          string   `json:"github_api_token"`          // github api token to perform auth requests
 }
 
-// todo add more remote sources - reddit
 
 func (c *Configuration) WriteConfig() {
 	configFilePath := filepath.Join(GetIrisDir(), "config.json")

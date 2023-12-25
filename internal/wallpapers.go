@@ -238,11 +238,13 @@ func (c *Configuration) githubRepoWallpaper() error {
 }
 
 func (c *Configuration) redditWallpaper() error {
+	// todo add support for imgur, ireddit, gallery
 	userAgent := fmt.Sprintf("%v:iris-%v:v0.4.0 (by /u/%v)", runtime.GOOS, _UUID[:6], _UUID[:6])
 	client, err := reddit.NewReadonlyClient(reddit.WithUserAgent(userAgent))
 	if err != nil {
 		return err
 	}
+	// todo use reddit token if found
 	subredditName := strings.Replace(strings.ToLower(c.RemoteSource), "r/", "", 1)
 	posts, _, err := client.Subreddit.TopPosts(context.Background(), subredditName, &reddit.ListPostOptions{Time: "all"})
 	if err != nil {
