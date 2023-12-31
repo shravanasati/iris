@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
+	"golang.org/x/mod/semver"
 )
 
 var lastCheckedFilePath = filepath.Join(GetIrisDir(), "last_checked.update")
@@ -21,18 +21,19 @@ const (
 )
 
 // Compares two semver strings of format vx.y.z.
-// Returns 1 if v1 > v2, -1 if v1 < v2, 0 if v1 == v2.
+// Returns greater if v1 > v2, lower if v1 < v2, equal if v1 == v2.
 func compareSemverStrings(v1, v2 string) int {
-	numbers1 := strings.Split(v1[1:], ".")
-	numbers2 := strings.Split(v2[1:], ".")
-	for i := 0; i < 3; i++ {
-		if numbers1[i] > numbers2[i] {
-			return greater
-		} else if numbers1[i] < numbers2[i] {
-			return lower
-		}
+	ans := semver.Compare(v1, v2)
+	switch ans {
+	case -1:
+		return lower
+	case 0:
+		return equal
+	case 1:
+		return greater
+	default:
+		panic(fmt.Sprintf("unknown number returned by semver.Compare(%s, %s)=%d", v1, v2, ans))
 	}
-	return equal
 }
 
 func getLastCheckedTime() time.Time {
