@@ -2,7 +2,7 @@
 
 # This script installs iris.
 #
-# Quick install: `curl https://raw.githubusercontent.com/Shravan-1908/iris/main/scripts/install.sh | bash`
+# Quick install: `curl https://raw.githubusercontent.com/shravanasati/iris/main/scripts/install.sh | bash`
 #
 # Acknowledgments:
 #   - https://github.com/zyedidia/eget
@@ -68,14 +68,14 @@ Export your selection as the GETIRIS_PLATFORM environment variable, and then
 re-run this script.
 For example:
   $ export GETIRIS_PLATFORM=linux_amd64
-  $ curl https://raw.githubusercontent.com/Shravan-1908/iris/main/scripts/install.sh | bash
+  $ curl https://raw.githubusercontent.com/shravanasati/iris/main/scripts/install.sh | bash
 EOM
   exit 1
 else
   printf "Detected platform: %s\n" "$platform"
 fi
 
-TAG=$(githubLatestTag Shravan-1908/iris)
+TAG=$(githubLatestTag shravanasati/iris)
 
 if [ "x$platform" = "xwindows_amd64" ] || [ "x$platform" = "xwindows_386" ] || [ "x$platform" = "xwindows_arm64" ]; then
   extension='zip'
@@ -84,9 +84,9 @@ else
 fi
 
 printf "Latest Version: %s\n" "$TAG"
-printf "Downloading https://github.com/Shravan-1908/iris/releases/download/v%s/iris_%s.%s\n" "$TAG" "$platform" "$extension"
+printf "Downloading https://github.com/shravanasati/iris/releases/download/v%s/iris_%s.%s\n" "$TAG" "$platform" "$extension"
 
-ensure curl -L "https://github.com/Shravan-1908/iris/releases/download/v$TAG/iris_$platform.$extension" > "iris.$extension"
+ensure curl -L "https://github.com/shravanasati/iris/releases/download/v$TAG/iris_$platform.$extension" > "iris.$extension"
 
 case "$extension" in
   "zip") ensure unzip -j "iris.$extension" -d "./iris" ;;

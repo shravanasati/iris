@@ -45,9 +45,9 @@ This section shows how you can setup your development environment to contribute 
 - Make changes.
 - Stage and commit (`git add .` and `git commit -m "COMMIT MESSAGE"`).
 - Push it to your remote repository (`git push`).
-- Open a pull request by clicking [here](https://github.com/Shravan-1908/iris/compare).
+- Open a pull request by clicking [here](https://github.com/shravanasati/iris/compare).
 
 
 ## Reporting Issues
 If you know a bug in the code or you want to file a feature request, open an issue.
-Choose the correct issue template from [here](https://github.com/Shravan-1908/iris/issues/new/choose).
+Choose the correct issue template from [here](https://github.com/shravanasati/iris/issues/new/choose).

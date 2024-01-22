@@ -27,7 +27,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Shravan-1908/iris/internal"
+	"github.com/shravanasati/iris/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -77,7 +77,7 @@ var rootCmd = &cobra.Command{
 	Short: "Run iris.",
 	Long: `iris is an easy to use, cross platform, feature rich, customizable and open source wallpaper manager. 
 	
-Visit https://github.com/Shravan-1908/iris for more information.`,
+Visit https://github.com/shravanasati/iris for more information.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		realMain()

@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/Shravan-1908/go-wallpaper"
+	"github.com/shravanasati/go-wallpaper"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
 )
 
@@ -84,7 +84,7 @@ func (c *Configuration) RemoteWallpaper() {
 	} else {
 		// todo edit readme about new config options - remote source and check for updates
 		// todo link to remote source docs here
-		fmt.Printf("Invalid remote source `%s`, defaulting to unsplash. Know more about iris remote source configuration at https://github.com/Shravan-1908/iris#customization \n", c.RemoteSource)
+		fmt.Printf("Invalid remote source `%s`, defaulting to unsplash. Know more about iris remote source configuration at https://github.com/shravanasati/iris#customization \n", c.RemoteSource)
 		if err := c.unsplashWallpaper(); err != nil {
 			fmt.Println(err)
 		}

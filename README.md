@@ -10,27 +10,27 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 
 ## 🌐 Table of Contents
 
-- [Features](https://github.com/Shravan-1908/iris#-features)
+- [Features](https://github.com/shravanasati/iris#-features)
 
-- [Installation](https://github.com/Shravan-1908/iris#%EF%B8%8F-installation)
-    * [Package Managers](https://github.com/Shravan-1908/iris/#package-managers)
-    * [Using Go compiler](https://github.com/Shravan-1908/iris/#using-go-compiler)
-    * [Build from source](https://github.com/Shravan-1908/iris/#build-from-source)
+- [Installation](https://github.com/shravanasati/iris#%EF%B8%8F-installation)
+    * [Package Managers](https://github.com/shravanasati/iris/#package-managers)
+    * [Using Go compiler](https://github.com/shravanasati/iris/#using-go-compiler)
+    * [Build from source](https://github.com/shravanasati/iris/#build-from-source)
 
-- [Motivation](https://github.com/Shravan-1908/iris#-motivation)
+- [Motivation](https://github.com/shravanasati/iris#-motivation)
 
-- [Usage](https://github.com/Shravan-1908/iris#-usage)
-    * [Root command](https://github.com/Shravan-1908/iris#root-command)
-    * [Customization](https://github.com/Shravan-1908/iris#customization)
-    * [Shell Completions](https://github.com/Shravan-1908/iris#shell-completions)
+- [Usage](https://github.com/shravanasati/iris#-usage)
+    * [Root command](https://github.com/shravanasati/iris#root-command)
+    * [Customization](https://github.com/shravanasati/iris#customization)
+    * [Shell Completions](https://github.com/shravanasati/iris#shell-completions)
 
-- [Changelog](https://github.com/Shravan-1908/iris#-changelog)
+- [Changelog](https://github.com/shravanasati/iris#-changelog)
 
-- [Versioning](https://github.com/Shravan-1908/iris#-versioning)
+- [Versioning](https://github.com/shravanasati/iris#-versioning)
 
-- [Licensing](https://github.com/Shravan-1908/iris#-license)
+- [Licensing](https://github.com/shravanasati/iris#-license)
 
-- [Contribution](https://github.com/Shravan-1908/iris#-contribution)
+- [Contribution](https://github.com/shravanasati/iris#-contribution)
 
 
 <br>
@@ -52,14 +52,14 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 #### Linux and macOS
 
 ```bash
-curl https://raw.githubusercontent.com/Shravan-1908/iris/main/scripts/install.sh | bash
+curl https://raw.githubusercontent.com/shravanasati/iris/main/scripts/install.sh | bash
 ```
 
 ### Package Managers
 
 #### Windows
 ```powershell
-scoop install https://github.com/Shravan-1908/iris/raw/main/scripts/iris.json
+scoop install https://github.com/shravanasati/iris/raw/main/scripts/iris.json
 ```
 
 <!-- iris is available on various package managers across different operating systems.
@@ -81,7 +81,7 @@ yay -S iris-bin
 
 ### GitHub Releases
 
-iris binaries for all operating systems are available on the [GitHub Releases](https://github.com/Shravan-1908/iris/releases/latest) tab. You can download them manually and place them on `PATH` in order to use them.
+iris binaries for all operating systems are available on the [GitHub Releases](https://github.com/shravanasati/iris/releases/latest) tab. You can download them manually and place them on `PATH` in order to use them.
 
 
 
@@ -91,7 +91,7 @@ If you've Go compiler (v1.18 or above) installed on your system, you can install
 
 
 ```
-go install github.com/Shravan-1908/iris@latest
+go install github.com/shravanasati/iris@latest
 ```
 
 
@@ -100,7 +100,7 @@ go install github.com/Shravan-1908/iris@latest
 You can alternatively build iris from source via the following commands (again, requires go1.18 or above):
 
 ```
-git clone https://github.com/Shravan-1908/iris.git
+git clone https://github.com/shravanasati/iris.git
 cd ./iris
 go build
 ```

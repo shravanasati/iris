@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import hashlib
 
-IRIS_BASE_URL = "https://github.com/Shravan-1908/iris"
+IRIS_BASE_URL = "https://github.com/shravanasati/iris"
 
 
 def hash_file(filename):

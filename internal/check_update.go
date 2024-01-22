@@ -88,7 +88,7 @@ func CheckForUpdates(currentVersion string) {
 		return
 	}
 
-	url := "https://api.github.com/repos/Shravan-1908/iris/releases/latest"
+	url := "https://api.github.com/repos/shravanasati/iris/releases/latest"
 	releaseInfo := releaseInfo{}
 	resp, err := http.Get(url)
 	if err != nil {

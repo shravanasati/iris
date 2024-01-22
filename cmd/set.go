@@ -24,7 +24,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Shravan-1908/iris/internal"
+	"github.com/shravanasati/iris/internal"
 	"github.com/spf13/cobra"
 )
 
