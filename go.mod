@@ -4,9 +4,9 @@ go 1.18
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/shravanasati/go-wallpaper v0.0.0-20230619063400-c10006d54870
 	github.com/google/uuid v1.4.0
 	github.com/olekukonko/tablewriter v0.0.5
+	github.com/shravanasati/go-wallpaper v0.0.0-20240122045619-41062539b668
 	github.com/spf13/cobra v1.7.0
 	github.com/vartanbeno/go-reddit/v2 v2.0.1
 	golang.org/x/mod v0.14.0

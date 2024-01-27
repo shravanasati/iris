@@ -32,8 +32,8 @@ var (
 	redditRegex = regexp.MustCompile(`^r/[\w\d_]{3,20}(?:\+[\w\d_]{3,20})*$`)
 
 	// matches a remote github folder
-	githubRegex          = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d]+){2}\/tree(\/[\w\-_\d]+){1,}$`)
-	getParamsGithubRegex = regexp.MustCompile(`(?i)^github\.com/([^/]+)/([^/]+)/tree/([^/]+)/(.+)$`)
+	githubRegex          = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d]+){2}\/tree(\/[\w\-_\d]+){1,}(\/){0,1}$`)
+	getParamsGithubRegex = regexp.MustCompile(`(?i)^github\.com/([^/]+)/([^/]+)/tree/([^/]+)(/.*)?$`)
 )
 
 var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
@@ -167,8 +167,13 @@ func getGithubAPIURL(ghRepoFolderURL string) (string, error) {
 		repo = matches[2]
 		branch = matches[3]
 		folderPath = matches[4]
+	} else if len(matches) == 4 {
+		owner = matches[1]
+		repo = matches[2]
+		branch = matches[3]
+		folderPath = ""
 	} else {
-		return "", fmt.Errorf("invalid remote source: %s. check your github URL", ghRepoFolderURL)
+		return "", fmt.Errorf("invalid remote source: %s. check your github URL, it must be of format github.com/owner/repo/tree/branch/optionalFolderPath", ghRepoFolderURL)
 	}
 	preparedURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s?ref=%s", owner, repo, folderPath, branch)
 	return preparedURL, nil
