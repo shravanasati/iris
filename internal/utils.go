@@ -30,8 +30,6 @@ const (
 	YB
 )
 
-var _UUID string
-
 func (b ByteSize) String() string {
 	switch {
 	case b >= YB:
@@ -146,6 +144,9 @@ func jsonify(data any) []byte {
 	return (byteArray)
 }
 
+var _UUID string
+
+// called by the init function, it sets the _UUID variable 
 func setupUUID() {
 	uuidFilepath := filepath.Join(GetIrisDir(), "uuid")
 	if CheckPathExists(uuidFilepath) {
