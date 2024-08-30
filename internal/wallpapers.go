@@ -32,7 +32,7 @@ var (
 	redditRegex = regexp.MustCompile(`^r/[\w\d_]{3,20}(?:\+[\w\d_]{3,20})*$`)
 
 	// matches a remote github folder
-	githubRegex          = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d]+){2}\/tree(\/[\w\-_\d]+){1,}(\/){0,1}$`)
+	githubRegex          = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d]+){2}\/tree(\/[\w\-_.\d]+){1,}(\/){0,1}$`)
 	getParamsGithubRegex = regexp.MustCompile(`(?i)^github\.com/([^/]+)/([^/]+)/tree/([^/]+)(/.*)?$`)
 )
 
