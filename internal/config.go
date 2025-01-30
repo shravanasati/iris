@@ -21,6 +21,7 @@ type Configuration struct {
 	Resolution              string   `json:"resolution"`                // wallpaper resolution, defaults to 1600x900
 	ChangeWallpaper         bool     `json:"change_wallpaper"`          // whether change wallpaper after a duration
 	ChangeWallpaperDuration string   `json:"change_wallpaper_duration"` // if wallpaper has to be changed, then after how many minutes
+	WallpaperFile           string   `json:"wallpaper_file"`            // path to the wallpaper file, might be a video as well
 	WallpaperDirectory      string   `json:"wallpaper_directory"`       // use wallpapers from a user specified directory instead of unsplash
 	SelectionType           string   `json:"selection_type"`            // directory wallpaper selection type, either sorted or random
 	SaveWallpaper           bool     `json:"save_wallpaper"`            // whether to save the used wallpapers or not
@@ -28,7 +29,6 @@ type Configuration struct {
 	CheckForUpdates         bool     `json:"check_for_updates"`         // whether to check for updates
 	GitHubAPIToken          string   `json:"github_api_token"`          // github api token to perform auth requests
 }
-
 
 func (c *Configuration) WriteConfig() {
 	configFilePath := filepath.Join(GetIrisDir(), "config.json")
@@ -55,6 +55,7 @@ func (c *Configuration) Show() {
 		{"Resolution", c.Resolution},
 		{"Change Wallpaper", fmt.Sprintf("%v", c.ChangeWallpaper)},
 		{"Change Wallpaper Duration", c.ChangeWallpaperDuration},
+		{"Wallpaper File", c.WallpaperFile},
 		{"Wallpaper Directory", c.WallpaperDirectory},
 		{"Selection Type", c.SelectionType},
 		{"Save Wallpaper", fmt.Sprintf("%v", c.SaveWallpaper)},
@@ -101,13 +102,14 @@ func getDefaultConfig() *Configuration {
 		Resolution:              "1920x1080",
 		ChangeWallpaper:         false,
 		ChangeWallpaperDuration: "5m",
+		WallpaperFile:           "",
 		WallpaperDirectory:      "",
 		SelectionType:           "random",
 		SaveWallpaper:           false,
 		SaveWallpaperDirectory:  filepath.Join(GetIrisDir(), "wallpapers"),
 		RemoteSource:            "unsplash",
 		CheckForUpdates:         true,
-		GitHubAPIToken: "",
+		GitHubAPIToken:          "",
 	}
 
 	return &defaultConfig

@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+var AllowedVideoExtensions = []string{"mp4", "mkv", "gif"}
+
 // breakIntoFrames uses ffmpeg to break the video into frames, and returns the location of
 // the directory where the frames are stored, and error.
 func breakIntoFrames(videoPath string) (string, error) {
@@ -64,7 +66,7 @@ func SetVideoWallpaper(videoPath string) error {
 	}
 	splitted := strings.Split(videoPath, ".")
 	ext := splitted[len(splitted)-1]
-	if !ItemInSlice(ext, []string{"mp4", "mkv", "gif"}) {
+	if !ItemInSlice(ext, AllowedVideoExtensions) {
 		return fmt.Errorf("the file `%s` is either unsupported or not a valid video file", videoPath)
 	}
 

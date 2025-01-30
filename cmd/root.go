@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"path/filepath"
 	"strings"
 	"time"
@@ -38,7 +39,8 @@ func realMain() {
 
 	// * determining if to use remote source or local images
 	useRemoteSource := false
-	if strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckPathExists(c.WallpaperDirectory) {
+
+	if (strings.TrimSpace(c.WallpaperFile) == "" || !internal.CheckPathExists(c.WallpaperFile)) && (strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckPathExists(c.WallpaperDirectory)) {
 		useRemoteSource = true
 	}
 
@@ -68,7 +70,32 @@ func realMain() {
 
 		// * wallpapers via local directory
 	} else {
-		c.DirectoryWallpaper()
+		if strings.TrimSpace(c.WallpaperFile) == "" || !internal.CheckPathExists(c.WallpaperFile) {
+			c.DirectoryWallpaper()
+		}
+
+		// a single wallpaper needs to be set
+		isVideo := false
+		splitted := strings.Split(c.WallpaperFile, ".")
+		if len(splitted) > 0 {
+			ext := splitted[len(splitted)-1]
+			if internal.ItemInSlice(strings.ToLower(ext), internal.AllowedVideoExtensions) {
+				isVideo = true
+			}
+		}
+
+		if isVideo {
+			if err := internal.SetVideoWallpaper(c.WallpaperFile); err != nil {
+				fmt.Println("unable to set video wallpaper:", c.WallpaperFile)
+				fmt.Println(err)
+			}
+		} else {
+			err := internal.SetWallpaper(c.WallpaperFile)
+			if err != nil {
+				fmt.Printf("unable to set %s as the desktop wallpaper! \n", c.WallpaperFile)
+				fmt.Println(err.Error())
+			}
+		}
 	}
 }
 

@@ -60,6 +60,8 @@ func init() {
 
 	configCmd.Flags().BoolVarP(&c.SaveWallpaper, "save-wallpaper", "s", c.SaveWallpaper, "Whether to save the wallpaper to the local directory.")
 
+	configCmd.Flags().StringVarP(&c.WallpaperFile, "wallpaper-file", "f", c.WallpaperFile, "Path to the wallpaper file.")
+
 	configCmd.Flags().StringVarP(&c.WallpaperDirectory, "wallpaper-directory", "w", c.WallpaperDirectory, "The local directory to get wallpapers from.")
 
 	configCmd.Flags().StringVarP(&c.SaveWallpaperDirectory, "save-wallpaper-directory", "u", c.SaveWallpaperDirectory, "The local directory to save wallpapers in.")
