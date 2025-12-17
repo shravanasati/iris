@@ -72,6 +72,7 @@ func realMain() {
 	} else {
 		if strings.TrimSpace(c.WallpaperFile) == "" || !internal.CheckPathExists(c.WallpaperFile) {
 			c.DirectoryWallpaper()
+			return
 		}
 
 		// a single wallpaper needs to be set
