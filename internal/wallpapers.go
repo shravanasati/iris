@@ -32,7 +32,7 @@ var (
 	redditRegex = regexp.MustCompile(`^r/[\w\d_]{3,20}(?:\+[\w\d_]{3,20})*$`)
 
 	// matches a remote github folder
-	githubRegex          = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d]+){2}\/tree(\/[\w\-_.\d]+){1,}(\/){0,1}$`)
+	githubRegex          = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d]+){2}\/tree(\/.+){1,}(\/){0,1}$`)
 	getParamsGithubRegex = regexp.MustCompile(`(?i)^github\.com/([^/]+)/([^/]+)/tree/([^/]+)(/.*)?$`)
 )
 
@@ -184,6 +184,7 @@ func getGithubAPIURL(ghRepoFolderURL string) (string, error) {
 func (c *Configuration) githubRepoWallpaper() error {
 	repoFolderURL := c.RemoteSource
 	preparedURL, err := getGithubAPIURL(repoFolderURL)
+	fmt.Println(preparedURL)
 	if err != nil {
 		return err
 	}

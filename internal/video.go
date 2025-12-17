@@ -27,6 +27,8 @@ func breakIntoFrames(videoPath string) (string, error) {
 		return framesLocation, er
 	}
 
+	// fmt.Println("breaking video into frames for the first time, this may take a while")
+
 	if !CheckPathExists(framesLocation) {
 		os.Mkdir(framesLocation, os.ModePerm)
 	}
