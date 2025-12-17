@@ -175,7 +175,7 @@ func getGithubAPIURL(ghRepoFolderURL string) (string, error) {
 	} else {
 		return "", fmt.Errorf("invalid remote source: %s. check your github URL, it must be of format github.com/owner/repo/tree/branch/optionalFolderPath", ghRepoFolderURL)
 	}
-	preparedURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s?ref=%s", owner, repo, folderPath, branch)
+	preparedURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents%s?ref=%s", owner, repo, folderPath, branch)
 	return preparedURL, nil
 }
 
@@ -184,7 +184,6 @@ func getGithubAPIURL(ghRepoFolderURL string) (string, error) {
 func (c *Configuration) githubRepoWallpaper() error {
 	repoFolderURL := c.RemoteSource
 	preparedURL, err := getGithubAPIURL(repoFolderURL)
-	fmt.Println(preparedURL)
 	if err != nil {
 		return err
 	}

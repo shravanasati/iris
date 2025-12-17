@@ -130,6 +130,7 @@ func ReadConfig() *Configuration {
 
 	configContent := readFile(configFilePath)
 	if e := json.Unmarshal([]byte(configContent), &config); e != nil {
+		fmt.Printf("unable to read config: %v\n", e)
 		fmt.Println("Looks like the iris configuration is corrupted/broken, rewriting it with default values.")
 		defaultConfig := getDefaultConfig()
 		defaultConfig.WriteConfig()
