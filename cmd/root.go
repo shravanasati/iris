@@ -35,27 +35,33 @@ import (
 var c = internal.ReadConfig()
 
 func realMain() {
+	internal.LogInfof("core", "iris version v0.4.0 started")
 	internal.ClearTemp()
 
 	// * determining if to use remote source or local images
 	useRemoteSource := false
 
 	if (strings.TrimSpace(c.WallpaperFile) == "" || !internal.CheckPathExists(c.WallpaperFile)) && (strings.TrimSpace(c.WallpaperDirectory) == "" || !internal.CheckPathExists(c.WallpaperDirectory)) {
+		internal.LogInfof("core", "no local wallpaper file or directory found, using remote source")
 		useRemoteSource = true
 	}
 
 	if strings.TrimSpace(c.SaveWallpaperDirectory) == "" || !internal.CheckPathExists(c.SaveWallpaperDirectory) {
 		c.SaveWallpaperDirectory = filepath.Join(internal.GetIrisDir(), "wallpapers")
+		internal.LogInfof("core", "set save wallpaper directory to: %s", c.SaveWallpaperDirectory)
 	}
 
 	// * wallpapers via remote source
 	if useRemoteSource {
+		internal.LogInfof("core", "using remote source: %s", c.RemoteSource)
 		if c.ChangeWallpaper {
 			duration, e := time.ParseDuration(c.ChangeWallpaperDuration)
 
 			if e != nil {
+				internal.LogWarnf("core", "invalid change wallpaper duration: %s, defaulting to 5m", c.ChangeWallpaperDuration)
 				duration = time.Minute * 5
 			}
+			internal.LogInfof("core", "changing wallpaper every %v", duration)
 			for {
 				c.RemoteWallpaper()
 				time.Sleep(duration)
@@ -67,6 +73,7 @@ func realMain() {
 		// * wallpapers via local directory
 	} else {
 		if strings.TrimSpace(c.WallpaperFile) == "" || !internal.CheckPathExists(c.WallpaperFile) {
+			internal.LogInfof("core", "using local directory wallpaper: %s", c.WallpaperDirectory)
 			c.DirectoryWallpaper()
 			return
 		}
@@ -82,13 +89,17 @@ func realMain() {
 		}
 
 		if isVideo {
+			internal.LogInfof("core", "setting video wallpaper: %s", c.WallpaperFile)
 			if err := internal.SetVideoWallpaper(c.WallpaperFile); err != nil {
+				internal.LogErrorf("core", "unable to set video wallpaper %s: %v", c.WallpaperFile, err)
 				fmt.Println("unable to set video wallpaper:", c.WallpaperFile)
 				fmt.Println(err)
 			}
 		} else {
+			internal.LogInfof("core", "setting image wallpaper: %s", c.WallpaperFile)
 			err := internal.SetWallpaper(c.WallpaperFile)
 			if err != nil {
+				internal.LogErrorf("core", "unable to set image wallpaper %s: %v", c.WallpaperFile, err)
 				fmt.Printf("unable to set %s as the desktop wallpaper! \n", c.WallpaperFile)
 				fmt.Println(err.Error())
 			}

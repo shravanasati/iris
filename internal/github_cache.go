@@ -33,15 +33,20 @@ func LoadGitHubCache() GitHubCacheMap {
 	cache := make(GitHubCacheMap)
 
 	if !CheckPathExists(cachePath) {
+		LogInfof("github-cache", "no cache file found at %s", cachePath)
 		return cache
 	}
 
 	data, err := os.ReadFile(cachePath)
 	if err != nil {
+		LogErrorf("github-cache", "failed to read cache file: %v", err)
 		return cache
 	}
 
-	json.Unmarshal(data, &cache)
+	err = json.Unmarshal(data, &cache)
+	if err != nil {
+		LogErrorf("github-cache", "failed to unmarshal cache data: %v", err)
+	}
 	return cache
 }
 
@@ -58,6 +63,7 @@ func SaveGitHubCache(cache GitHubCacheMap) error {
 func (c *Configuration) SyncGitHubCache(repoURL string) error {
 	preparedURL, err := getGithubAPIURL(repoURL)
 	if err != nil {
+		LogErrorf("github-cache", "failed to get github api url for %s: %v", repoURL, err)
 		return err
 	}
 
@@ -69,11 +75,16 @@ func (c *Configuration) SyncGitHubCache(repoURL string) error {
 
 	parsed, err := parseGitHubRepoSource(repoURL)
 	if err != nil {
+		LogErrorf("github-cache", "failed to parse github repo source %s: %v", repoURL, err)
 		return err
 	}
 
+	LogInfof("github-cache", "syncing %s", repoURL)
 	fmt.Printf("Syncing %s...\n", repoURL)
 	_, err = FetchAndCache(parsed.normalizedURL, preparedURL, parsed.owner, parsed.repo, parsed.branch, parsed.folderPath, ghToken)
+	if err != nil {
+		LogErrorf("github-cache", "failed to sync %s: %v", repoURL, err)
+	}
 	return err
 }
 
@@ -155,35 +166,35 @@ func GitHubCacheShow() {
 
 func FetchAndCache(repoURL, preparedURL, owner, repo, branch, folderPath, token string) ([]map[string]any, error) {
 	start := time.Now()
-	fmt.Printf("[github-cache] start repo=%s\n", repoURL)
+	LogInfof("github-cache", "starting fetch and cache for repo: %s", repoURL)
 
 	cache := LoadGitHubCache()
 	cachedData, exists := cache[repoURL]
-	fmt.Printf("[github-cache] cache loaded entries=%d hit=%t\n", len(cache), exists)
+	LogInfof("github-cache", "cache loaded. entries: %d, hit: %t", len(cache), exists)
 
 	// 1. Try to get latest SHA
 	shaStart := time.Now()
-	fmt.Printf("[github-cache] checking latest commit SHA...\n")
+	LogInfof("github-cache", "checking latest commit sha")
 	latestSHA, err := GetLatestCommitSHA(owner, repo, branch, folderPath, token)
 	if err != nil {
-		fmt.Printf("Warning: Failed to fetch latest commit SHA: %v. Falling back to cache if available.\n", err)
+		LogWarnf("github-cache", "failed to fetch latest commit sha: %v, falling back to cache if available", err)
 		if exists {
-			fmt.Printf("[github-cache] using cached wallpapers due to SHA error count=%d elapsed=%s\n", len(cachedData.Wallpapers), time.Since(start))
+			LogInfof("github-cache", "using cached wallpapers due to sha error. count: %d, elapsed: %s", len(cachedData.Wallpapers), time.Since(start))
 			return cachedData.Wallpapers, nil
 		}
 		return nil, err
 	}
-	fmt.Printf("[github-cache] latest SHA resolved in %s\n", time.Since(shaStart))
+	LogInfof("github-cache", "latest sha resolved in %s", time.Since(shaStart))
 
 	// 2. Check if SHA matches
 	if exists && cachedData.LastSHA == latestSHA {
-		fmt.Printf("[github-cache] cache is up to date; returning cached wallpapers count=%d elapsed=%s\n", len(cachedData.Wallpapers), time.Since(start))
+		LogInfof("github-cache", "cache is up to date. returning cached wallpapers. count: %d, elapsed: %s", len(cachedData.Wallpapers), time.Since(start))
 		return cachedData.Wallpapers, nil
 	}
 
 	// 3. Fetch fresh list
 	fetchStart := time.Now()
-	fmt.Printf("[github-cache] cache miss or stale SHA; fetching fresh file list...\n")
+	LogInfof("github-cache", "cache miss or stale sha. fetching fresh file list")
 	req, err := http.NewRequest(http.MethodGet, preparedURL, nil)
 	if err != nil {
 		return nil, err
@@ -194,20 +205,20 @@ func FetchAndCache(repoURL, preparedURL, owner, repo, branch, folderPath, token 
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Printf("Warning: Failed to fetch fresh file list: %v. Falling back to cache if available.\n", err)
+		LogWarnf("github-cache", "failed to fetch fresh file list: %v, falling back to cache if available", err)
 		if exists {
-			fmt.Printf("[github-cache] using cached wallpapers due to fetch error count=%d elapsed=%s\n", len(cachedData.Wallpapers), time.Since(start))
+			LogInfof("github-cache", "using cached wallpapers due to fetch error. count: %d, elapsed: %s", len(cachedData.Wallpapers), time.Since(start))
 			return cachedData.Wallpapers, nil
 		}
 		return nil, err
 	}
 	defer resp.Body.Close()
-	fmt.Printf("[github-cache] fresh list response status=%s in %s\n", resp.Status, time.Since(fetchStart))
+	LogInfof("github-cache", "fresh list response status: %s in %s", resp.Status, time.Since(fetchStart))
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("Warning: GitHub API returned %s. Falling back to cache if available.\n", resp.Status)
+		LogWarnf("github-cache", "github api returned %s, falling back to cache if available", resp.Status)
 		if exists {
-			fmt.Printf("[github-cache] using cached wallpapers due to non-200 response count=%d elapsed=%s\n", len(cachedData.Wallpapers), time.Since(start))
+			LogInfof("github-cache", "using cached wallpapers due to non-200 response. count: %d, elapsed: %s", len(cachedData.Wallpapers), time.Since(start))
 			return cachedData.Wallpapers, nil
 		}
 		return nil, fmt.Errorf("received non-200 status code: %s", resp.Status)
@@ -216,14 +227,16 @@ func FetchAndCache(repoURL, preparedURL, owner, repo, branch, folderPath, token 
 	decodeStart := time.Now()
 	jsonData, err := io.ReadAll(resp.Body)
 	if err != nil {
+		LogErrorf("github-cache", "failed to read response body: %v", err)
 		return nil, err
 	}
 
 	var freshWallpapers []map[string]any
 	if err := json.Unmarshal(jsonData, &freshWallpapers); err != nil {
+		LogErrorf("github-cache", "failed to unmarshal fresh wallpapers: %v", err)
 		return nil, err
 	}
-	fmt.Printf("[github-cache] decoded fresh wallpapers count=%d in %s\n", len(freshWallpapers), time.Since(decodeStart))
+	LogInfof("github-cache", "decoded fresh wallpapers. count: %d in %s", len(freshWallpapers), time.Since(decodeStart))
 
 	// 4. Update and Save Cache
 	cache[repoURL] = GitHubRepoCache{
@@ -231,9 +244,10 @@ func FetchAndCache(repoURL, preparedURL, owner, repo, branch, folderPath, token 
 		Wallpapers: freshWallpapers,
 	}
 	if err := SaveGitHubCache(cache); err != nil {
+		LogErrorf("github-cache", "failed to save cache: %v", err)
 		return nil, err
 	}
-	fmt.Printf("[github-cache] cache saved successfully total elapsed=%s\n", time.Since(start))
+	LogInfof("github-cache", "cache saved successfully. total elapsed: %s", time.Since(start))
 
 	return freshWallpapers, nil
 }

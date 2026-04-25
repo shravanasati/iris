@@ -12,7 +12,6 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-
 type Configuration struct {
 	RemoteSource            string   `json:"remote_source"`             // remote source to fetch wallpapers from
 	SearchTerms             []string `json:"search_terms"`              // wallpaper search terms

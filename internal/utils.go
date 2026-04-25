@@ -80,41 +80,52 @@ func CheckPathExists(filePath string) bool {
 // downloaded image.
 // Returns filepath to the downloaded image and a error, if any.
 func downloadImage(url string, temp bool) (string, error) {
+	LogInfof("utils", "downloading image from: %s", url)
 	res, err := http.Get(url)
 	if err != nil {
+		LogErrorf("utils", "failed to fetch image: %v", err)
 		return "", err
 	}
 	defer res.Body.Close()
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		LogErrorf("utils", "non-200 status code: %s", res.Status)
 		return "", errors.New("non-200 status code")
 	}
 
 	tempDir := ReadConfig().SaveWallpaperDirectory
 	if !CheckPathExists(tempDir) {
 		tempDir = filepath.Join(GetIrisDir(), "wallpapers")
+		LogInfof("utils", "save directory does not exist, using default: %s", tempDir)
 	}
 	if temp {
 		tempDir = filepath.Join(GetIrisDir(), "temp")
+		LogInfof("utils", "using temp directory for download: %s", tempDir)
 	}
 
 	filename := time.Now().Format("02-01-2006 15-04-05" + ".jpg")
 	filename = strings.ReplaceAll(filename, " ", "-")
-	file, err := os.Create(filepath.Join(tempDir, filename))
+	filePath := filepath.Join(tempDir, filename)
+	LogInfof("utils", "saving image to: %s", filePath)
+	file, err := os.Create(filePath)
 
 	if err != nil {
+		LogErrorf("utils", "failed to create file: %v", err)
 		return "", err
 	}
 
 	_, err = io.Copy(file, res.Body)
 	if err != nil {
+		LogErrorf("utils", "failed to save image content: %v", err)
 		return "", err
 	}
 
 	err = file.Close()
 	if err != nil {
+		LogErrorf("utils", "failed to close file: %v", err)
 		return "", err
 	}
 
+	LogInfof("utils", "image downloaded successfully: %s", file.Name())
 	return file.Name(), nil
 }
 
@@ -146,19 +157,23 @@ func jsonify(data any) []byte {
 
 var _UUID string
 
-// called by the init function, it sets the _UUID variable 
+// called by the init function, it sets the _UUID variable
 func setupUUID() {
 	uuidFilepath := filepath.Join(GetIrisDir(), "uuid")
 	if CheckPathExists(uuidFilepath) {
 		_UUID = readFile(uuidFilepath)
+		LogInfof("utils", "loaded existing uuid: %s", _UUID)
 	} else {
 		_UUID = uuid.New().String()
+		LogInfof("utils", "generating new uuid: %s", _UUID)
 		uuidFile, err := os.Create(uuidFilepath)
 		if err != nil {
+			LogErrorf("utils", "unable to create uuid file: %v", err)
 			fmt.Println("unable to create uuid file")
 			os.Exit(1)
 		}
 		if _, err = uuidFile.WriteString(_UUID); err != nil {
+			LogErrorf("utils", "unable to write uuid: %v", err)
 			fmt.Println("unable to write uuid")
 			os.Exit(1)
 		}

@@ -47,15 +47,22 @@ var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
 
 // SetWallpaper sets the wallpaper to thegiven file.
 func SetWallpaper(filename string) error {
+	LogInfof("set-wallpaper", "setting wallpaper to: %s", filename)
 	if !CheckPathExists(filename) {
+		LogErrorf("set-wallpaper", "file does not exist: %s", filename)
 		return fmt.Errorf("the file `%s` doesn't exist", filename)
 	}
 
 	absPath, err := (filepath.Abs(filename))
 	if err != nil {
+		LogErrorf("set-wallpaper", "failed to get absolute path for %s: %v", filename, err)
 		return err
 	}
-	return wallpaper.SetFromFile(absPath)
+	err = wallpaper.SetFromFile(absPath)
+	if err != nil {
+		LogErrorf("set-wallpaper", "failed to set wallpaper from file %s: %v", absPath, err)
+	}
+	return err
 }
 
 // Returns the current set wallpaper or the error.
@@ -67,45 +74,52 @@ func GetWallpaper() string {
 	return wallpaperPath
 }
 
-
 // RemoteWallpaper dispatches the appropriate function to change wallpaper.
 func (c *Configuration) RemoteWallpaper() {
 	unquotedSource := strings.Trim(c.RemoteSource, "\"'")
 	remoteSource := strings.ToLower(strings.TrimSpace(unquotedSource))
+	LogInfof("remote-wallpaper", "dispatching remote wallpaper for source: %s", remoteSource)
 	if remoteSource == "spotlight" {
 		if err := c.windowsSpotlightWallpaper(); err != nil {
+			LogErrorf("remote-wallpaper", "spotlight wallpaper failed: %v", err)
 			fmt.Println(err)
 		}
 	} else if redditRegex.Match([]byte(remoteSource)) {
 		if err := c.redditWallpaper(); err != nil {
+			LogErrorf("remote-wallpaper", "reddit wallpaper failed: %v", err)
 			fmt.Println(err)
 		}
 	} else if githubRegex.Match([]byte(remoteSource)) {
 		if err := c.githubRepoWallpaper(); err != nil {
+			LogErrorf("remote-wallpaper", "github wallpaper failed: %v", err)
 			fmt.Println(err)
 		}
 	} else {
+		LogWarnf("remote-wallpaper", "invalid remote source: %s, falling back to spotlight", remoteSource)
 		fmt.Printf("Invalid remote source `%s`, defaulting to spotlight. Know more about iris remote source configuration at https://github.com/shravanasati/iris#customization \n", unquotedSource)
 		if err := c.windowsSpotlightWallpaper(); err != nil {
+			LogErrorf("remote-wallpaper", "fallback spotlight wallpaper failed: %v", err)
 			fmt.Println(err)
 		}
 	}
 }
-
 
 func (c *Configuration) windowsSpotlightWallpaper() error {
 	// determine the url to hit
 	var url string
 	if len(c.SearchTerms) == 0 {
 		url = spotlightDomain
+		LogInfof("wallpapers", "using spotlight home as source")
 	} else {
 		searchTerms := strings.Join(c.SearchTerms, "+")
 		url = spotlightDomain + searchEndpoint + "/" + searchTerms
+		LogInfof("wallpapers", "using spotlight tag search for terms: %s", searchTerms)
 	}
 
 	// send a get request
 	resp, err := http.Get(url)
 	if err != nil {
+		LogErrorf("wallpapers", "failed to fetch spotlight page %s: %v", url, err)
 		return fmt.Errorf("unable to load page: %s, error: %v", url, err)
 	}
 	defer resp.Body.Close()
@@ -113,6 +127,7 @@ func (c *Configuration) windowsSpotlightWallpaper() error {
 	// parse the html content
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
+		LogErrorf("wallpapers", "failed to parse spotlight html: %v", err)
 		return fmt.Errorf("unable to parse html document from windows10spotlight: %v", err)
 	}
 
@@ -127,16 +142,20 @@ func (c *Configuration) windowsSpotlightWallpaper() error {
 	})
 
 	if len(links) == 0 {
+		LogWarnf("wallpapers", "no images found on spotlight page: %v", url)
 		return fmt.Errorf("unable to find any image link on url=%v", url)
 	}
 
 	// select a random image, download it, and set it as wallpaper
 	selectedURL := randomChoice(links)
+	LogInfof("wallpapers", "selected random spotlight image: %s", selectedURL)
 	f, err := downloadImage(selectedURL, !c.SaveWallpaper)
 	if err != nil {
+		LogErrorf("wallpapers", "failed to download selected spotlight image: %v", err)
 		return fmt.Errorf("unable to download image: %s", selectedURL)
 	}
 	if err := SetWallpaper(f); err != nil {
+		LogErrorf("wallpapers", "failed to apply spotlight wallpaper: %v", err)
 		return fmt.Errorf("unable to set wallpaper: %s", err)
 	}
 	return nil
@@ -187,6 +206,7 @@ func (c *Configuration) githubRepoWallpaper() error {
 	repoFolderURL := c.RemoteSource
 	preparedURL, err := getGithubAPIURL(repoFolderURL)
 	if err != nil {
+		LogErrorf("wallpapers", "failed to prepare github api url for %s: %v", repoFolderURL, err)
 		return err
 	}
 
@@ -199,11 +219,13 @@ func (c *Configuration) githubRepoWallpaper() error {
 
 	parsed, err := parseGitHubRepoSource(repoFolderURL)
 	if err != nil {
+		LogErrorf("wallpapers", "failed to parse github source %s: %v", repoFolderURL, err)
 		return err
 	}
 
 	recvData, err := FetchAndCache(parsed.normalizedURL, preparedURL, parsed.owner, parsed.repo, parsed.branch, parsed.folderPath, ghToken)
 	if err != nil {
+		LogErrorf("wallpapers", "github fetch and cache failed: %v", err)
 		return err
 	}
 
@@ -211,15 +233,19 @@ func (c *Configuration) githubRepoWallpaper() error {
 	choice := randomChoice(recvData)["download_url"]
 	downloadURL, ok := choice.(string)
 	if !ok {
+		LogErrorf("wallpapers", "invalid github download url format: %v", choice)
 		return fmt.Errorf("unable to assert string type onto download url: %v", choice)
 	}
+	LogInfof("wallpapers", "selected github image: %s", downloadURL)
 	f, err := downloadImage(downloadURL, !c.SaveWallpaper)
 	if err != nil {
+		LogErrorf("wallpapers", "failed to download github image: %v", err)
 		return err
 	}
 
 	// set downloaded image as wallpaper
 	if err = SetWallpaper(f); err != nil {
+		LogErrorf("wallpapers", "failed to apply github wallpaper: %v", err)
 		return err
 	}
 	return nil
@@ -230,20 +256,32 @@ func (c *Configuration) redditWallpaper() error {
 	userAgent := fmt.Sprintf("%v:iris-%v:v0.4.0 (by /u/%v)", runtime.GOOS, _UUID[:6], _UUID[:6])
 	client, err := reddit.NewReadonlyClient(reddit.WithUserAgent(userAgent))
 	if err != nil {
+		LogErrorf("wallpapers", "failed to initialize reddit client: %v", err)
 		return err
 	}
 	// todo use reddit token if found
 	subredditName := strings.Replace(strings.ToLower(c.RemoteSource), "r/", "", 1)
+	LogInfof("wallpapers", "fetching top posts from reddit: %s", subredditName)
 	posts, _, err := client.Subreddit.TopPosts(context.Background(), subredditName, &reddit.ListPostOptions{Time: "all"})
 	if err != nil {
+		LogErrorf("wallpapers", "failed to fetch reddit posts for %s: %v", subredditName, err)
 		return err
 	}
-	f, err := downloadImage(randomChoice(posts).URL, !c.SaveWallpaper)
+	if len(posts) == 0 {
+		LogWarnf("wallpapers", "no posts found in subreddit: %s", subredditName)
+		return fmt.Errorf("no posts found in subreddit: %s", subredditName)
+	}
+
+	selectedPost := randomChoice(posts)
+	LogInfof("wallpapers", "selected reddit image: %s (from post: %s)", selectedPost.URL, selectedPost.ID)
+	f, err := downloadImage(selectedPost.URL, !c.SaveWallpaper)
 	if err != nil {
+		LogErrorf("wallpapers", "failed to download reddit image: %v", err)
 		return err
 	}
 	err = SetWallpaper(f)
 	if err != nil {
+		LogErrorf("wallpapers", "failed to apply reddit wallpaper: %v", err)
 		return err
 	}
 	// todo how to download gallery posts
@@ -251,7 +289,6 @@ func (c *Configuration) redditWallpaper() error {
 
 	return nil
 }
-
 
 func (c *Configuration) getValidWallpapers() []string {
 	contents := []string{}
@@ -275,27 +312,39 @@ func (c *Configuration) getValidWallpapers() []string {
 }
 
 func (c *Configuration) DirectoryWallpaper() {
+	LogInfof("wallpapers", "selecting wallpaper from directory: %s", c.WallpaperDirectory)
 	contents := c.getValidWallpapers()
 	if len(contents) == 0 {
+		LogWarnf("wallpapers", "no valid wallpapers found in directory: %s", c.WallpaperDirectory)
 		fmt.Printf("No valid wallpapers found in the directory `%s`.\n", c.WallpaperDirectory)
 		return
 	}
+
+	LogInfof("wallpapers", "found %d valid wallpapers, selection type: %s", len(contents), c.SelectionType)
 
 	if c.SelectionType == "random" {
 		if c.ChangeWallpaper {
 			duration, e := time.ParseDuration(c.ChangeWallpaperDuration)
 			if e != nil {
+				LogWarnf("wallpapers", "invalid duration %s, defaulting to 5m", c.ChangeWallpaperDuration)
 				duration = time.Minute * 5
 			}
+			LogInfof("wallpapers", "starting random wallpaper loop with %v duration", duration)
 			for {
-				if err := SetWallpaper(randomChoice(contents)); err != nil {
+				selected := randomChoice(contents)
+				LogInfof("wallpapers", "random selection: %s", selected)
+				if err := SetWallpaper(selected); err != nil {
+					LogErrorf("wallpapers", "failed to set directory wallpaper: %v", err)
 					fmt.Println(err.Error())
 					os.Exit(1)
 				}
 				time.Sleep(duration)
 			}
 		} else {
-			if err := SetWallpaper(randomChoice(contents)); err != nil {
+			selected := randomChoice(contents)
+			LogInfof("wallpapers", "random selection (single): %s", selected)
+			if err := SetWallpaper(selected); err != nil {
+				LogErrorf("wallpapers", "failed to set directory wallpaper: %v", err)
 				fmt.Println(err.Error())
 				os.Exit(1)
 			}
@@ -305,14 +354,18 @@ func (c *Configuration) DirectoryWallpaper() {
 		if c.ChangeWallpaper {
 			duration, e := time.ParseDuration(c.ChangeWallpaperDuration)
 			if e != nil {
+				LogWarnf("wallpapers", "invalid duration %s, defaulting to 5m", c.ChangeWallpaperDuration)
 				duration = time.Minute * 5
 			}
 
 			wallpapers := c.getValidWallpapers()
 			sort.Strings(wallpapers)
+			LogInfof("wallpapers", "starting sorted wallpaper loop with %v duration", duration)
 			for {
 				for i := range wallpapers {
-					if err := SetWallpaper(contents[i]); err != nil {
+					LogInfof("wallpapers", "sequential selection: %s", wallpapers[i])
+					if err := SetWallpaper(wallpapers[i]); err != nil {
+						LogErrorf("wallpapers", "failed to set directory wallpaper: %v", err)
 						fmt.Println(err.Error())
 						os.Exit(1)
 					}
@@ -322,7 +375,10 @@ func (c *Configuration) DirectoryWallpaper() {
 			}
 
 		} else {
-			if err := SetWallpaper(contents[0]); err != nil {
+			selected := contents[0]
+			LogInfof("wallpapers", "sequential selection (single): %s", selected)
+			if err := SetWallpaper(selected); err != nil {
+				LogErrorf("wallpapers", "failed to set directory wallpaper: %v", err)
 				fmt.Println(err.Error())
 				os.Exit(1)
 			}
@@ -332,16 +388,22 @@ func (c *Configuration) DirectoryWallpaper() {
 
 // ClearTemp deletes all the wallpapers present in ~/.iris/temp.
 func ClearTemp() {
-	tempContents, er := os.ReadDir(filepath.Join(GetIrisDir(), "temp"))
+	tempPath := filepath.Join(GetIrisDir(), "temp")
+	LogInfof("wallpapers", "clearing temp directory: %s", tempPath)
+	tempContents, er := os.ReadDir(tempPath)
 	if er != nil {
+		LogErrorf("wallpapers", "failed to read temp directory: %v", er)
 		fmt.Println(er)
 		panic("unable to get ~/.iris/temp contents")
 	}
 
 	for _, f := range tempContents {
-		if err := os.Remove(filepath.Join(GetIrisDir(), "temp", f.Name())); err != nil {
+		fullPath := filepath.Join(tempPath, f.Name())
+		if err := os.Remove(fullPath); err != nil {
+			LogErrorf("wallpapers", "failed to delete temp file %s: %v", f.Name(), err)
 			fmt.Println(err)
 			panic("unable to delete " + f.Name())
 		}
 	}
+	LogInfof("wallpapers", "temp directory cleared successfully")
 }

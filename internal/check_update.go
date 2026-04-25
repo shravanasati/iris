@@ -38,8 +38,10 @@ func compareSemverStrings(v1, v2 string) int {
 
 func getLastCheckedTime() time.Time {
 	if !CheckPathExists(lastCheckedFilePath) {
+		LogInfof("update", "last checked file not found, creating new one")
 		lastCheckedFile, err := os.Create(lastCheckedFilePath)
 		if err != nil {
+			LogErrorf("update", "failed to create last checked file: %v", err)
 			panic("unable to create the last checked file")
 		}
 		defer lastCheckedFile.Close()
@@ -47,8 +49,10 @@ func getLastCheckedTime() time.Time {
 		writeLastCheckedTime(t)
 		return t
 	} else {
-		t, err := time.Parse(timeFormat, readFile(lastCheckedFilePath))
+		content := readFile(lastCheckedFilePath)
+		t, err := time.Parse(timeFormat, content)
 		if err != nil {
+			LogErrorf("update", "failed to parse last checked time: %v", err)
 			panic("unable to parse time in last checked update file")
 		}
 		return t
@@ -56,8 +60,10 @@ func getLastCheckedTime() time.Time {
 }
 
 func writeLastCheckedTime(t time.Time) {
+	LogInfof("update", "writing last checked time: %s", t.Format(timeFormat))
 	lastCheckedFile, err := os.Create(lastCheckedFilePath)
 	if err != nil {
+		LogErrorf("update", "failed to write last checked time: %v", err)
 		panic("unable to create the last checked update file")
 	}
 	lastCheckedFile.Write([]byte(t.Format(timeFormat)))
@@ -73,39 +79,50 @@ type releaseInfo struct {
 }
 
 func (ri releaseInfo) display() {
+	LogInfof("update", "notifying user of new release: %s", ri.TagName)
 	fmt.Printf("\nnote: new `%s` of iris is now available at `%s` \n\nfull release article: \n%s \n%s\n", ri.TagName, ri.HTMLURL, ri.Name, ri.Body)
 }
 
 func CheckForUpdates(currentVersion string) {
 	config := ReadConfig()
 	if !config.CheckForUpdates {
+		LogInfof("update", "update check disabled in config")
 		return
 	}
 
 	now := time.Now()
-	if !(now.Sub(getLastCheckedTime()).Hours() >= 24) {
+	lastChecked := getLastCheckedTime()
+	if !(now.Sub(lastChecked).Hours() >= 24) {
 		// updates were checked for within 24 hours
+		LogInfof("update", "skipping update check, last checked %v hours ago", now.Sub(lastChecked).Hours())
 		return
 	}
 
+	LogInfof("update", "checking for updates, current version: %s", currentVersion)
 	url := "https://api.github.com/repos/shravanasati/iris/releases/latest"
 	releaseInfo := releaseInfo{}
 	resp, err := http.Get(url)
 	if err != nil {
+		LogErrorf("update", "failed to fetch latest release: %v", err)
 		return
 	}
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
+		LogErrorf("update", "failed to read release response: %v", err)
 		return
 	}
 	json.Unmarshal(data, &releaseInfo)
 	writeLastCheckedTime(now)
+
+	LogInfof("update", "latest release version: %s", releaseInfo.TagName)
 	if compareSemverStrings(releaseInfo.TagName, currentVersion) != greater {
 		// no new version
+		LogInfof("update", "iris is up to date")
 		return
 	}
 	if releaseInfo.IsDraft || releaseInfo.IsPrelease {
 		// dont want to tell users about draft or prereleases
+		LogInfof("update", "new release %s found but it is a draft or prerelease, skipping", releaseInfo.TagName)
 		return
 	}
 
