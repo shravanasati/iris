@@ -60,7 +60,6 @@ func GetWallpaper() string {
 	return wallpaperPath
 }
 
-// todo add logs
 
 // RemoteWallpaper dispatches the appropriate function to change wallpaper.
 func (c *Configuration) RemoteWallpaper() {
@@ -78,8 +77,6 @@ func (c *Configuration) RemoteWallpaper() {
 			fmt.Println(err)
 		}
 	} else {
-		// todo edit readme about new config options - remote source and check for updates
-		// todo link to remote source docs here
 		fmt.Printf("Invalid remote source `%s`, defaulting to spotlight. Know more about iris remote source configuration at https://github.com/shravanasati/iris#customization \n", c.RemoteSource)
 		if err := c.windowsSpotlightWallpaper(); err != nil {
 			fmt.Println(err)

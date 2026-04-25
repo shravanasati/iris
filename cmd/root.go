@@ -48,10 +48,6 @@ func realMain() {
 		c.SaveWallpaperDirectory = filepath.Join(internal.GetIrisDir(), "wallpapers")
 	}
 
-	if !internal.ItemInSlice(c.Resolution, internal.SupportedResolutions) {
-		c.Resolution = "1600x900"
-	}
-
 	// * wallpapers via remote source
 	if useRemoteSource {
 		if c.ChangeWallpaper {

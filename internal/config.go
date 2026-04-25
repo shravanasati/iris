@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"reflect"
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
@@ -123,16 +124,60 @@ func ReadConfig() *Configuration {
 	}
 
 	configContent := readFile(configFilePath)
-	if e := json.Unmarshal([]byte(configContent), &config); e != nil {
-		fmt.Printf("unable to read config: %v\n", e)
+
+	// implement backward compatibility
+	// unmarshal into a map to see which keys are present
+	var configMap map[string]any
+	if err := json.Unmarshal([]byte(configContent), &configMap); err != nil {
+		fmt.Printf("unable to read config: %v\n", err)
 		fmt.Println("Looks like the iris configuration is corrupted/broken, rewriting it with default values.")
 		defaultConfig := getDefaultConfig()
 		defaultConfig.WriteConfig()
 		return defaultConfig
 	}
+
+	defaultConfig := getDefaultConfig()
+	serializedDefault, _ := json.Marshal(defaultConfig)
+	var defaultMap map[string]any
+	json.Unmarshal(serializedDefault, &defaultMap)
+
+	needsUpdate := false
+	for key, value := range defaultMap {
+		actualValue, exists := configMap[key]
+		if !exists {
+			configMap[key] = value
+			needsUpdate = true
+		} else {
+			// type check to ensure existing values match the expected type
+			if reflect.TypeOf(actualValue) != reflect.TypeOf(value) {
+				configMap[key] = value
+				needsUpdate = true
+			}
+		}
+	}
+
+	// remove keys that are no longer supported (like resolution)
+	for key := range configMap {
+		if _, exists := defaultMap[key]; !exists {
+			delete(configMap, key)
+			needsUpdate = true
+		}
+	}
+
+	if needsUpdate {
+		// unmarshal the updated map back into the config struct
+		updatedConfigBytes, _ := json.Marshal(configMap)
+		json.Unmarshal(updatedConfigBytes, &config)
+		config.WriteConfig()
+	} else {
+		// if no update was needed, just unmarshal the original content into the struct
+		if e := json.Unmarshal([]byte(configContent), &config); e != nil {
+			fmt.Printf("unable to read config: %v\n", e)
+			defaultConfig := getDefaultConfig()
+			defaultConfig.WriteConfig()
+			return defaultConfig
+		}
+	}
+
 	return &config
 }
-
-// todo rewrite existing config with new options
-// in ReadConfig use prepareConfig function to unmarshal into a map and then add those
-// options if they dont exist
