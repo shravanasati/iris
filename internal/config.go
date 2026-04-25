@@ -28,18 +28,22 @@ type Configuration struct {
 
 func (c *Configuration) WriteConfig() {
 	configFilePath := filepath.Join(GetIrisDir(), "config.json")
+	LogInfof("config", "writing configuration to: %s", configFilePath)
 
 	configFile, fer := os.Create(configFilePath)
 	if fer != nil {
+		LogErrorf("config", "failed to create config file: %v", fer)
 		fmt.Println("Unable to write config due to following error:", fer)
 		os.Exit(1)
 	}
 	defer configFile.Close()
 
 	if _, wer := configFile.Write(jsonify(c)); wer != nil {
+		LogErrorf("config", "failed to write config data: %v", wer)
 		fmt.Println("Unable to write config due to following error:", wer)
 		os.Exit(1)
 	}
+	LogInfof("config", "configuration written successfully")
 }
 
 func (c *Configuration) Show() {
@@ -113,8 +117,10 @@ func ReadConfig() *Configuration {
 	config := Configuration{}
 
 	configFilePath := filepath.Join(GetIrisDir(), "config.json")
+	LogInfof("config", "reading configuration from: %s", configFilePath)
 
 	if !CheckPathExists(configFilePath) {
+		LogInfof("config", "config file not found, creating default")
 		defaultConfig := getDefaultConfig()
 
 		defaultConfig.WriteConfig()
@@ -128,6 +134,7 @@ func ReadConfig() *Configuration {
 	// unmarshal into a map to see which keys are present
 	var configMap map[string]any
 	if err := json.Unmarshal([]byte(configContent), &configMap); err != nil {
+		LogErrorf("config", "failed to parse config json: %v", err)
 		fmt.Printf("unable to read config: %v\n", err)
 		fmt.Println("Looks like the iris configuration is corrupted/broken, rewriting it with default values.")
 		defaultConfig := getDefaultConfig()
@@ -144,11 +151,13 @@ func ReadConfig() *Configuration {
 	for key, value := range defaultMap {
 		actualValue, exists := configMap[key]
 		if !exists {
+			LogInfof("config", "adding missing key: %s", key)
 			configMap[key] = value
 			needsUpdate = true
 		} else {
 			// type check to ensure existing values match the expected type
 			if reflect.TypeOf(actualValue) != reflect.TypeOf(value) {
+				LogWarnf("config", "type mismatch for key %s, resetting to default", key)
 				configMap[key] = value
 				needsUpdate = true
 			}
@@ -158,12 +167,14 @@ func ReadConfig() *Configuration {
 	// remove keys that are no longer supported (like resolution)
 	for key := range configMap {
 		if _, exists := defaultMap[key]; !exists {
+			LogInfof("config", "removing unsupported key: %s", key)
 			delete(configMap, key)
 			needsUpdate = true
 		}
 	}
 
 	if needsUpdate {
+		LogInfof("config", "updating config file with new keys/types")
 		// unmarshal the updated map back into the config struct
 		updatedConfigBytes, _ := json.Marshal(configMap)
 		json.Unmarshal(updatedConfigBytes, &config)
@@ -171,11 +182,13 @@ func ReadConfig() *Configuration {
 	} else {
 		// if no update was needed, just unmarshal the original content into the struct
 		if e := json.Unmarshal([]byte(configContent), &config); e != nil {
+			LogErrorf("config", "failed to unmarshal final config: %v", e)
 			fmt.Printf("unable to read config: %v\n", e)
 			defaultConfig := getDefaultConfig()
 			defaultConfig.WriteConfig()
 			return defaultConfig
 		}
+		LogInfof("config", "configuration loaded successfully")
 	}
 
 	return &config
