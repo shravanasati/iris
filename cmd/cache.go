@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -19,6 +16,7 @@ The cache command provides the access to manage this cache.
 Examples:
 $ iris cache size
 $ iris cache list
+$ iris cache rm "C:\Path\To\Video.mp4"
 $ iris cache clear
 `,
 	Run: func(cmd *cobra.Command, args []string) {

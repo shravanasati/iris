@@ -19,7 +19,7 @@ var clearCmd = &cobra.Command{
 Example:
 $ iris cache clear`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := internal.CacheEmpty()
+		err := internal.CacheClear()
 		if err != nil {
 			fmt.Println("Unable to empty cache:", err)
 		} else {

@@ -21,6 +21,7 @@ iris is an easy to use, cross platform and customizable wallpaper manager.
 
 - [Usage](https://github.com/shravanasati/iris#-usage)
     * [Root command](https://github.com/shravanasati/iris#root-command)
+    * [Cache](https://github.com/shravanasati/iris#cache)
     * [Customization](https://github.com/shravanasati/iris#customization)
     * [Shell Completions](https://github.com/shravanasati/iris#shell-completions)
 
@@ -154,6 +155,25 @@ Only mp4, mkv and gif files are supported at the moment.
 
 The first time running this command on a single video might take some time since iris first converts the video into frames using ffmpeg and then iterates through the frames and sets each one of them as wallpaper every few milliseconds.
 
+### Cache
+
+The `cache` command provides access to manage the iris video cache. Since video wallpapers are implemented by converting videos into frames, iris caches these frames to avoid reconverting them every time you set a video wallpaper.
+
+Example usages:
+
+```bash
+# Print the total cache size used by iris
+$ iris cache size
+
+# List out the paths of all videos iris has cached
+$ iris cache list
+
+# Remove a specific video and its associated frames from the cache
+$ iris cache rm "/path/to/video.mp4"
+
+# Clear the entire cache (deletes all frames and references)
+$ iris cache clear
+```
 
 ### Customization
 

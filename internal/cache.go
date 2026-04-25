@@ -102,8 +102,8 @@ func CacheSize() ByteSize {
 	return ByteSize(size)
 }
 
-// CacheEmpty empties all iris video cache.
-func CacheEmpty() error {
+// CacheClear empties all iris video cache.
+func CacheClear() error {
 	cacheLocation := filepath.Join(GetIrisDir(), "cache")
 	subdirs, err := filepath.Glob(filepath.Join(cacheLocation, "*"))
 	if err != nil {
@@ -136,6 +136,25 @@ func CacheEmpty() error {
 	}
 
 	return nil
+}
+
+// CacheRemove removes a single item from the iris video cache.
+func CacheRemove(videoPath string) error {
+	ca := loadCache()
+	val, ok := ca.data[videoPath]
+	if !ok {
+		return fmt.Errorf("video %s not found in cache", videoPath)
+	}
+
+	if CheckPathExists(val.FramesFolderPath) {
+		err := os.RemoveAll(val.FramesFolderPath)
+		if err != nil {
+			return err
+		}
+	}
+
+	delete(ca.data, videoPath)
+	return ca.write()
 }
 
 func CacheShow() {
