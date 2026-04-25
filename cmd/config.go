@@ -36,6 +36,7 @@ Examples:
 $ iris config --remote-source spotlight
 $ iris config --search-terms landscape,nature
 $ iris config --save-wallpaper[=false]
+$ iris config --wallpaper-file ~/Pictures/my-wallpaper.jpg
 $ iris config --wallpaper-directory /home/user/Pictures/Wallpapers
 $ iris config --change-wallpaper[=false]
 $ iris config --resolution 1920x1080
@@ -72,6 +73,6 @@ func init() {
 
 	configCmd.Flags().StringSliceVarP(&c.SearchTerms, "search-terms", "q", c.SearchTerms, "The search terms for unsplash wallpapers.")
 
-	configCmd.Flags().StringVar(&c.GitHubAPIToken, "github-token", c.GitHubAPIToken, "The GitHub API token, used to perform authorized requests.")
+	configCmd.Flags().StringVar(&c.GitHubAPIToken, "github-token", c.GitHubAPIToken, "The GitHub Personal Access Token (PAT), used to perform authorized requests to fetch wallpapers from GitHub repositories.")
 
 }

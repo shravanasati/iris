@@ -163,20 +163,20 @@ When iris is ran for the first time, it automatically configures itself with sen
 
 You can customize iris to work as you wish by using the `config` command.
 
-<!-- TODO WALLLPER FILE -->
 
 ```
 $ iris config --help
 
-iris v0.2.0
+iris v0.4.0
 The config command is used to customize iris according to your needs. All configuration options are exposed as flags.
-
+	
 Examples:
 
-$ iris config --save-wallpaper
-$ iris config --wallpaper-directory /home/user/Pictures/Wallpapers
+$ iris config --remote-source spotlight
 $ iris config --search-terms landscape,nature
-$ iris config --change-wallpaper=false  
+$ iris config --save-wallpaper[=false]
+$ iris config --wallpaper-directory /home/user/Pictures/Wallpapers
+$ iris config --change-wallpaper[=false]
 $ iris config --resolution 1920x1080
 $ iris config list
 
@@ -189,16 +189,21 @@ Available Commands:
 
 Flags:
   -c, --change-wallpaper                   Whether to change wallpapers continuosly in the background.
+      --check-for-updates                  Whether to check for updates of iris from github. (default true)
+      --github-token string                The GitHub API token, used to perform authorized requests.
   -h, --help                               help for config
+      --remote-source string               Remote source to select wallpapers from. Valid options are: unsplash, spotlight, github.
   -r, --resolution string                  The image resolution to use for unsplash wallpapers. (default "1920x1080")
-  -s, --save-wallpaper                     Whether to save the wallpaper to the local directory. (default true)
-  -u, --save-wallpaper-directory string    The local directory to save wallpapers in. (default "C:\\Users\\LENOVO\\.iris\\wallpapers")
-  -q, --search-terms strings               The search terms for unsplash wallpapers. (default [landscape])
-  -t, --selection-type random              The selection type for choosing wallpapers from the local directory, either random or `sorted`. (default "random")  
+  -s, --save-wallpaper                     Whether to save the wallpaper to the local directory.
+  -u, --save-wallpaper-directory string    The local directory to save wallpapers in. (default "C:\\Users\\devsh\\.iris\\wallpapers")
+  -q, --search-terms strings               The search terms for unsplash wallpapers. (default [nature])
+  -t, --selection-type random              The selection type for choosing wallpapers from the local directory, either random or `sorted`. (default "random")
   -d, --wallpaper-change-duration string   The duration between wallpaper changes, if to change them continuosly. (default "5m")
-  -w, --wallpaper-directory string         The local directory to get wallpapers from.
+  -w, --wallpaper-directory string         The local directory to get wallpapers from. (default "C:\\Users\\devsh\\OneDrive\\Pictures\\favorites")
+  -f, --wallpaper-file string              Path to the wallpaper file.
 
 Use "iris config [command] --help" for more information about a command.
+
 ```
 
 All configuration fields are pretty self explanatory, still I'd like to describe them all in brief.
@@ -215,6 +220,8 @@ All configuration fields are pretty self explanatory, still I'd like to describe
 
 - Change wallpaper duration: If to change wallpapers, then after how long. The duration value can be anything in format `30s` `4m5s` `1h` `2h30m8s`.
 
+- Wallpaper file: Specify path to a single wallpaper file.
+
 - Wallpaper directory: Specify your own wallpaper directory if you don't want iris to use unsplash.
 
 - Selection type: If to use wallpapers from the local system, then what should be the selection type: random or sorted.
@@ -222,6 +229,8 @@ All configuration fields are pretty self explanatory, still I'd like to describe
 - Save wallpaper: Boolean value for whether to save the unsplash wallpapers or delete them after usage. If this is set to true, then the wallpapers will be stored in `~/.iris/wallpapers` directory by default, unless the following option is not altered.
 
 - Save wallpaper directory: Choose a directory to save wallpapers in. Defaults to `~/.iris/wallpapers`.
+
+- GitHub Token: The GitHub Personal Access Token (PAT) used to perform authorized requests when fetching wallpapers from GitHub repositories. You can create one from [here](https://github.com/settings/tokens). You need to grant "Contents" repository permission for a fine-grained token or the "repo" scope for the classic PAT.
 
 
 You can also view your iris configuration using `iris config list` command.
