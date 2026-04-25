@@ -33,5 +33,5 @@ $ iris cache rm "C:\Path\To\Video.mp4"`,
 }
 
 func init() {
-	cacheCmd.AddCommand(rmCmd)
+	cacheVideoCmd.AddCommand(rmCmd)
 }

@@ -2,10 +2,9 @@ package internal
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -32,9 +31,17 @@ var (
 	redditRegex = regexp.MustCompile(`^r/[\w\d_]{3,20}(?:\+[\w\d_]{3,20})*$`)
 
 	// matches a remote github folder
-	githubRegex          = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d]+){2}\/tree(\/.+){1,}(\/){0,1}$`)
+	githubRegex          = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d% \.\(\)@&]+){2}\/tree(\/.+){1,}(\/){0,1}$`)
 	getParamsGithubRegex = regexp.MustCompile(`(?i)^github\.com/([^/]+)/([^/]+)/tree/([^/]+)(/.*)?$`)
 )
+
+type githubRepoSource struct {
+	normalizedURL string
+	owner         string
+	repo          string
+	branch        string
+	folderPath    string
+}
 
 var validImageExtensions = []string{"png", "jpg", "jpeg", "jfif"}
 
@@ -63,7 +70,8 @@ func GetWallpaper() string {
 
 // RemoteWallpaper dispatches the appropriate function to change wallpaper.
 func (c *Configuration) RemoteWallpaper() {
-	remoteSource := strings.ToLower(strings.TrimSpace(c.RemoteSource))
+	unquotedSource := strings.Trim(c.RemoteSource, "\"'")
+	remoteSource := strings.ToLower(strings.TrimSpace(unquotedSource))
 	if remoteSource == "spotlight" {
 		if err := c.windowsSpotlightWallpaper(); err != nil {
 			fmt.Println(err)
@@ -77,7 +85,7 @@ func (c *Configuration) RemoteWallpaper() {
 			fmt.Println(err)
 		}
 	} else {
-		fmt.Printf("Invalid remote source `%s`, defaulting to spotlight. Know more about iris remote source configuration at https://github.com/shravanasati/iris#customization \n", c.RemoteSource)
+		fmt.Printf("Invalid remote source `%s`, defaulting to spotlight. Know more about iris remote source configuration at https://github.com/shravanasati/iris#customization \n", unquotedSource)
 		if err := c.windowsSpotlightWallpaper(); err != nil {
 			fmt.Println(err)
 		}
@@ -135,9 +143,21 @@ func (c *Configuration) windowsSpotlightWallpaper() error {
 }
 
 func getGithubAPIURL(ghRepoFolderURL string) (string, error) {
+	parsed, err := parseGitHubRepoSource(ghRepoFolderURL)
+	if err != nil {
+		return "", err
+	}
+	preparedURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents%s?ref=%s", parsed.owner, parsed.repo, parsed.folderPath, parsed.branch)
+	return preparedURL, nil
+}
+
+func parseGitHubRepoSource(ghRepoFolderURL string) (githubRepoSource, error) {
 	if protocolRegex.Match([]byte(strings.ToLower(ghRepoFolderURL))) {
 		ghRepoFolderURL = protocolRegex.ReplaceAllLiteralString(ghRepoFolderURL, "")
 	}
+
+	ghRepoFolderURL, _ = url.PathUnescape(ghRepoFolderURL)
+
 	matches := getParamsGithubRegex.FindStringSubmatch(ghRepoFolderURL)
 	var owner, repo, branch, folderPath string
 	if len(matches) == 5 {
@@ -151,22 +171,21 @@ func getGithubAPIURL(ghRepoFolderURL string) (string, error) {
 		branch = matches[3]
 		folderPath = ""
 	} else {
-		return "", fmt.Errorf("invalid remote source: %s. check your github URL, it must be of format github.com/owner/repo/tree/branch/optionalFolderPath", ghRepoFolderURL)
+		return githubRepoSource{}, fmt.Errorf("invalid remote source: %s. check your github URL, it must be of format github.com/owner/repo/tree/branch/optionalFolderPath", ghRepoFolderURL)
 	}
-	preparedURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents%s?ref=%s", owner, repo, folderPath, branch)
-	return preparedURL, nil
-}
 
-// todo add option to backup github repo results
+	return githubRepoSource{
+		normalizedURL: ghRepoFolderURL,
+		owner:         owner,
+		repo:          repo,
+		branch:        branch,
+		folderPath:    folderPath,
+	}, nil
+}
 
 func (c *Configuration) githubRepoWallpaper() error {
 	repoFolderURL := c.RemoteSource
 	preparedURL, err := getGithubAPIURL(repoFolderURL)
-	if err != nil {
-		return err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, preparedURL, nil)
 	if err != nil {
 		return err
 	}
@@ -177,28 +196,14 @@ func (c *Configuration) githubRepoWallpaper() error {
 	if ghToken == "" {
 		ghToken = os.Getenv("IRIS_GH_TOKEN")
 	}
-	// if gh token is present, add header to the request
-	if ghToken != "" {
-		req.Header.Add("Authorization", "token "+ghToken)
-	}
 
-	// get response from api
-	resp, err := http.DefaultClient.Do(req)
+	parsed, err := parseGitHubRepoSource(repoFolderURL)
 	if err != nil {
 		return err
 	}
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("recieved non 200 status code from the api: %v", resp.Status)
-	}
-	defer resp.Body.Close()
 
-	// read response, and unmarshal it
-	jsonData, err := io.ReadAll(resp.Body)
+	recvData, err := FetchAndCache(parsed.normalizedURL, preparedURL, parsed.owner, parsed.repo, parsed.branch, parsed.folderPath, ghToken)
 	if err != nil {
-		return err
-	}
-	var recvData []map[string]any
-	if err = json.Unmarshal(jsonData, &recvData); err != nil {
 		return err
 	}
 

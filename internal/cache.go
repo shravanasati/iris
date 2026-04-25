@@ -81,7 +81,7 @@ func loadCache() *cache {
 	return cacheObj
 }
 
-// Returns total cache size.
+// CacheSize returns total cache size, including video frames and remote source results.
 func CacheSize() ByteSize {
 	cacheLocation := filepath.Join(GetIrisDir(), "cache")
 	var size int64
@@ -90,7 +90,7 @@ func CacheSize() ByteSize {
 		if err != nil {
 			return err
 		}
-		if !info.IsDir() && filepath.Ext(info.Name()) != ".json" {
+		if !info.IsDir() {
 			size += info.Size()
 		}
 		return nil
@@ -102,7 +102,7 @@ func CacheSize() ByteSize {
 	return ByteSize(size)
 }
 
-// CacheClear empties all iris video cache.
+// CacheClear empties all iris cache, including videos and remote source results.
 func CacheClear() error {
 	cacheLocation := filepath.Join(GetIrisDir(), "cache")
 	subdirs, err := filepath.Glob(filepath.Join(cacheLocation, "*"))
@@ -121,6 +121,11 @@ func CacheClear() error {
 			// If it's a directory, remove it
 			err := os.RemoveAll(subdir)
 			if err != nil {
+				return err
+			}
+		} else if fileInfo.Name() == "github.json" {
+			// Also remove github cache
+			if err := os.Remove(subdir); err != nil {
 				return err
 			}
 		}

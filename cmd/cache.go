@@ -26,8 +26,6 @@ $ iris cache clear
 	},
 }
 
-// todo document cache command in the readme
-// todo ruminate over whether to remove a single item from the cache or not
 
 func init() {
 	rootCmd.AddCommand(cacheCmd)

@@ -157,22 +157,46 @@ The first time running this command on a single video might take some time since
 
 ### Cache
 
-The `cache` command provides access to manage the iris video cache. Since video wallpapers are implemented by converting videos into frames, iris caches these frames to avoid reconverting them every time you set a video wallpaper.
+The `cache` command provides access to manage iris storage. This includes video frame caches and the GitHub repository result cache.
 
-Example usages:
+#### Video Cache
+Since video wallpapers are implemented by converting videos into frames, iris caches these frames to avoid reconverting them every time you set a video wallpaper.
 
 ```bash
-# Print the total cache size used by iris
+# Print the total cache size used by iris (videos + remote sources)
 $ iris cache size
 
 # List out the paths of all videos iris has cached
-$ iris cache list
+$ iris cache video list
 
-# Remove a specific video and its associated frames from the cache
-$ iris cache rm "/path/to/video.mp4"
+# Remove a specific video from the cache
+$ iris cache video rm "/path/to/video.mp4"
 
-# Clear the entire cache (deletes all frames and references)
+# Clear all video caches
+$ iris cache video clear
+```
+
+#### GitHub Cache
+iris caches the results of GitHub repository listings to support offline mode and reduce API traffic by checking commit SHAs before fetching updates.
+
+```bash
+# List all GitHub repositories currently cached
+$ iris cache github list
+
+# Force a refresh of the cache for a specific repository on next run
+$ iris cache github sync "github.com/user/repo/tree/branch"
+
+# Clear all cached GitHub repository results
+$ iris cache github clear
+```
+
+#### Global Cache Helpers
+```bash
+# Clear the entire cache (deletes everything: video frames, github data, etc.)
 $ iris cache clear
+
+# Total aggregate size of all caches
+$ iris cache size
 ```
 
 ### Customization
