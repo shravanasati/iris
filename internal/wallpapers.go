@@ -65,11 +65,7 @@ func GetWallpaper() string {
 // RemoteWallpaper dispatches the appropriate function to change wallpaper.
 func (c *Configuration) RemoteWallpaper() {
 	remoteSource := strings.ToLower(strings.TrimSpace(c.RemoteSource))
-	if remoteSource == "unsplash" {
-		if err := c.unsplashWallpaper(); err != nil {
-			fmt.Println(err)
-		}
-	} else if remoteSource == "spotlight" {
+	if remoteSource == "spotlight" {
 		if err := c.windowsSpotlightWallpaper(); err != nil {
 			fmt.Println(err)
 		}
@@ -84,28 +80,13 @@ func (c *Configuration) RemoteWallpaper() {
 	} else {
 		// todo edit readme about new config options - remote source and check for updates
 		// todo link to remote source docs here
-		fmt.Printf("Invalid remote source `%s`, defaulting to unsplash. Know more about iris remote source configuration at https://github.com/shravanasati/iris#customization \n", c.RemoteSource)
-		if err := c.unsplashWallpaper(); err != nil {
+		fmt.Printf("Invalid remote source `%s`, defaulting to spotlight. Know more about iris remote source configuration at https://github.com/shravanasati/iris#customization \n", c.RemoteSource)
+		if err := c.windowsSpotlightWallpaper(); err != nil {
 			fmt.Println(err)
 		}
 	}
 }
 
-// unsplashWallpaper changes the wallpaper using unsplash.
-func (c *Configuration) unsplashWallpaper() error {
-	searchTerms := strings.Join(c.SearchTerms, ",")
-
-	url := fmt.Sprintf("https://source.unsplash.com/%v/?%v", c.Resolution, searchTerms)
-	f, e := downloadImage(url, !c.SaveWallpaper)
-	if e != nil {
-		return e
-	} else {
-		if se := SetWallpaper(f); se != nil {
-			return se
-		}
-	}
-	return nil
-}
 
 func (c *Configuration) windowsSpotlightWallpaper() error {
 	// determine the url to hit
@@ -269,7 +250,6 @@ func (c *Configuration) redditWallpaper() error {
 	return nil
 }
 
-// todo add docstring for functions
 
 func (c *Configuration) getValidWallpapers() []string {
 	contents := []string{}

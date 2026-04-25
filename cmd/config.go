@@ -39,7 +39,6 @@ $ iris config --save-wallpaper[=false]
 $ iris config --wallpaper-file ~/Pictures/my-wallpaper.jpg
 $ iris config --wallpaper-directory /home/user/Pictures/Wallpapers
 $ iris config --change-wallpaper[=false]
-$ iris config --resolution 1920x1080
 $ iris config list
 
 `,
@@ -51,7 +50,7 @@ $ iris config list
 func init() {
 	rootCmd.AddCommand(configCmd)
 
-	configCmd.Flags().StringVar(&c.RemoteSource, "remote-source", c.RemoteSource, "Remote source to select wallpapers from. Valid options are: unsplash, spotlight, github.")
+	configCmd.Flags().StringVar(&c.RemoteSource, "remote-source", c.RemoteSource, "Remote source to select wallpapers from. Valid options are: spotlight, github.")
 
 	configCmd.Flags().BoolVar(&c.CheckForUpdates, "check-for-updates", c.CheckForUpdates, "Whether to check for updates of iris from github.")
 
@@ -67,11 +66,9 @@ func init() {
 
 	configCmd.Flags().StringVarP(&c.SaveWallpaperDirectory, "save-wallpaper-directory", "u", c.SaveWallpaperDirectory, "The local directory to save wallpapers in.")
 
-	configCmd.Flags().StringVarP(&c.Resolution, "resolution", "r", c.Resolution, "The image resolution to use for unsplash wallpapers.")
-
 	configCmd.Flags().StringVarP(&c.SelectionType, "selection-type", "t", c.SelectionType, "The selection type for choosing wallpapers from the local directory, either `random` or `sorted`.")
 
-	configCmd.Flags().StringSliceVarP(&c.SearchTerms, "search-terms", "q", c.SearchTerms, "The search terms for unsplash wallpapers.")
+	configCmd.Flags().StringSliceVarP(&c.SearchTerms, "search-terms", "q", c.SearchTerms, "The search terms for spotlight remote wallpapers.")
 
 	configCmd.Flags().StringVar(&c.GitHubAPIToken, "github-token", c.GitHubAPIToken, "The GitHub Personal Access Token (PAT), used to perform authorized requests to fetch wallpapers from GitHub repositories.")
 

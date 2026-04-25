@@ -11,18 +11,14 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-var (
-	SupportedResolutions = []string{"1024x768", "1600x900", "1920x1080", "3840x2160"}
-)
 
 type Configuration struct {
 	RemoteSource            string   `json:"remote_source"`             // remote source to fetch wallpapers from
-	SearchTerms             []string `json:"search_terms"`              // wallpaper search terms for unsplash
-	Resolution              string   `json:"resolution"`                // wallpaper resolution, defaults to 1600x900
+	SearchTerms             []string `json:"search_terms"`              // wallpaper search terms
 	ChangeWallpaper         bool     `json:"change_wallpaper"`          // whether change wallpaper after a duration
 	ChangeWallpaperDuration string   `json:"change_wallpaper_duration"` // if wallpaper has to be changed, then after how many minutes
 	WallpaperFile           string   `json:"wallpaper_file"`            // path to the wallpaper file, might be a video as well
-	WallpaperDirectory      string   `json:"wallpaper_directory"`       // use wallpapers from a user specified directory instead of unsplash
+	WallpaperDirectory      string   `json:"wallpaper_directory"`       // use wallpapers from a user specified directory
 	SelectionType           string   `json:"selection_type"`            // directory wallpaper selection type, either sorted or random
 	SaveWallpaper           bool     `json:"save_wallpaper"`            // whether to save the used wallpapers or not
 	SaveWallpaperDirectory  string   `json:"save_wallpaper_directory"`  // directory to save the used wallpapers
@@ -52,7 +48,6 @@ func (c *Configuration) Show() {
 	data := [][]string{
 		{"Search Terms", searchTerms},
 		{"Remote Source", c.RemoteSource},
-		{"Resolution", c.Resolution},
 		{"Change Wallpaper", fmt.Sprintf("%v", c.ChangeWallpaper)},
 		{"Change Wallpaper Duration", c.ChangeWallpaperDuration},
 		{"Wallpaper File", c.WallpaperFile},
@@ -99,7 +94,6 @@ func GetIrisDir() string {
 func getDefaultConfig() *Configuration {
 	defaultConfig := Configuration{
 		SearchTerms:             []string{"nature"},
-		Resolution:              "1920x1080",
 		ChangeWallpaper:         false,
 		ChangeWallpaperDuration: "5m",
 		WallpaperFile:           "",
@@ -107,7 +101,7 @@ func getDefaultConfig() *Configuration {
 		SelectionType:           "random",
 		SaveWallpaper:           false,
 		SaveWallpaperDirectory:  filepath.Join(GetIrisDir(), "wallpapers"),
-		RemoteSource:            "unsplash",
+		RemoteSource:            "spotlight",
 		CheckForUpdates:         true,
 		GitHubAPIToken:          "",
 	}

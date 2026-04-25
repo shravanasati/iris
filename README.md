@@ -157,7 +157,7 @@ The first time running this command on a single video might take some time since
 
 ### Customization
 
-iris uses [unsplash](https://source.unsplash.com) for fetching remote wallpapers. However, you can use your own collection of wallpapers too.
+iris supports multiple remote sources for fetching wallpapers, including [Windows Spotlight](https://windows10spotlight.com) and [GitHub](https://github.com). You can also use your own local collection of wallpapers.
 
 When iris is ran for the first time, it automatically configures itself with sensible defaults.
 
@@ -177,7 +177,6 @@ $ iris config --search-terms landscape,nature
 $ iris config --save-wallpaper[=false]
 $ iris config --wallpaper-directory /home/user/Pictures/Wallpapers
 $ iris config --change-wallpaper[=false]
-$ iris config --resolution 1920x1080
 $ iris config list
 
 Usage:
@@ -190,13 +189,12 @@ Available Commands:
 Flags:
   -c, --change-wallpaper                   Whether to change wallpapers continuosly in the background.
       --check-for-updates                  Whether to check for updates of iris from github. (default true)
-      --github-token string                The GitHub API token, used to perform authorized requests.
+      --github-token string                The GitHub Personal Access Token (PAT), used to perform authorized requests to fetch wallpapers from GitHub repositories.
   -h, --help                               help for config
-      --remote-source string               Remote source to select wallpapers from. Valid options are: unsplash, spotlight, github.
-  -r, --resolution string                  The image resolution to use for unsplash wallpapers. (default "1920x1080")
+      --remote-source string               Remote source to select wallpapers from. Valid options are: spotlight, github.
   -s, --save-wallpaper                     Whether to save the wallpaper to the local directory.
   -u, --save-wallpaper-directory string    The local directory to save wallpapers in. (default "C:\\Users\\devsh\\.iris\\wallpapers")
-  -q, --search-terms strings               The search terms for unsplash wallpapers. (default [nature])
+  -q, --search-terms strings               The search terms for spotlight remote wallpapers. (default [nature])
   -t, --selection-type random              The selection type for choosing wallpapers from the local directory, either random or `sorted`. (default "random")
   -d, --wallpaper-change-duration string   The duration between wallpaper changes, if to change them continuosly. (default "5m")
   -w, --wallpaper-directory string         The local directory to get wallpapers from. (default "C:\\Users\\devsh\\OneDrive\\Pictures\\favorites")
@@ -208,13 +206,9 @@ Use "iris config [command] --help" for more information about a command.
 
 All configuration fields are pretty self explanatory, still I'd like to describe them all in brief.
 
-- Search Terms: The search terms for unsplash images, i.e., which kind of wallpaper do you want. You can have multiple search terms, but its recommended to not to have more than 3 since it narrows down the search results.
+- Remote Source: Specify where to fetch wallpapers from. Supported sources are `spotlight` (Windows Spotlight) and `github` (GitHub repository).
 
-- Resolution: The desired wallpaper resolution. Can only be one of the following:
-    * `1024x768`
-	* `1600x900`
-	* `1920x1080`
-	* `3840x2160`
+- Search Terms: The search terms for remote wallpapers. You can have multiple search terms, but its recommended to not to have more than 3 since it narrows down the search results. The search terms are used only when the remote source is set to spotlight.
 
 - Change wallpaper: Boolean value for whether to continuously change wallpapers or not.
 
@@ -222,11 +216,11 @@ All configuration fields are pretty self explanatory, still I'd like to describe
 
 - Wallpaper file: Specify path to a single wallpaper file.
 
-- Wallpaper directory: Specify your own wallpaper directory if you don't want iris to use unsplash.
+- Wallpaper directory: Specify your own wallpaper directory if you don't want iris to use a remote source.
 
 - Selection type: If to use wallpapers from the local system, then what should be the selection type: random or sorted.
 
-- Save wallpaper: Boolean value for whether to save the unsplash wallpapers or delete them after usage. If this is set to true, then the wallpapers will be stored in `~/.iris/wallpapers` directory by default, unless the following option is not altered.
+- Save wallpaper: Boolean value for whether to save the remote wallpapers or delete them after usage. If this is set to true, then the wallpapers will be stored in `~/.iris/wallpapers` directory by default, unless the following option is not altered.
 
 - Save wallpaper directory: Choose a directory to save wallpapers in. Defaults to `~/.iris/wallpapers`.
 
@@ -243,7 +237,6 @@ iris v0.2.1
 |          OPTION           |              VALUE               |
 +---------------------------+----------------------------------+
 | Search Terms              | nature                           |
-| Resolution                | 1920x1080                        |
 | Change Wallpaper          | false                            |
 | Change Wallpaper Duration | 5m                               |
 | Wallpaper Directory       |                                  |
