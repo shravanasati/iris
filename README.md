@@ -82,6 +82,12 @@ yay -S iris-bin
 
 ### GitHub Releases
 
+Use [`eget`](https://github.com/zyedidia/eget) to automatically download and extract the binaries:
+
+```
+eget shravanasati/iris
+```
+
 iris binaries for all operating systems are available on the [GitHub Releases](https://github.com/shravanasati/iris/releases/latest) tab. You can download them manually and place them on `PATH` in order to use them.
 
 
