@@ -1,18 +1,18 @@
 {
   "homepage": "https://github.com/shravanasati/iris",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "architecture": {
     "64bit": {
       "url": "https://github.com/shravanasati/iris/releases/latest/download/iris_windows_amd64.zip",
-      "hash": "0f894cfb1b2c12422365a7facbce8d25c4503610bf3df41626f133d272659c7c"
+      "hash": "72fbadb6a08e3412ac49065eb082c2ae03ee3a509b758fa11821f3561e8c7996"
     },
     "32bit": {
       "url": "https://github.com/shravanasati/iris/releases/latest/download/iris_windows_386.zip",
-      "hash": "21a3d8718b1cafd31b09778cc15ceacb41778aa7d3196aed68c2e0ac67461cae"
+      "hash": "eb9d2fd17cb59e56e920880c8444c1bc37e9dcb1c2ca54ef682028c3a4facdd6"
     },
     "arm64": {
       "url": "https://github.com/shravanasati/iris/releases/latest/download/iris_windows_arm64.zip",
-      "hash": "3e32a77a61920a821879777e2325a85b121ad51e8cf88ceb4a6aa109a00fb968"
+      "hash": "2dca29e45c8c597444705401defe15934df1eac7dee36c9ba6999b0498bc3af9"
     }
   },
   "license": "MIT",
