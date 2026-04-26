@@ -201,7 +201,25 @@ $ iris cache size
 
 ### Customization
 
-iris supports multiple remote sources for fetching wallpapers, including [Windows Spotlight](https://windows10spotlight.com) and [GitHub](https://github.com). You can also use your own local collection of wallpapers.
+iris supports multiple remote sources for fetching wallpapers, including **Windows Spotlight**, **GitHub**, and **Reddit**. You can also use your own local collection of wallpapers.
+
+#### Remote Sources
+
+- **Windows Spotlight**: Fetches images from [windows10spotlight.com](https://windows10spotlight.com).
+  - Use with: `iris config --remote-source spotlight`
+  - Filter with: `iris config --search-terms "landscape,ocean"`
+
+- **GitHub**: Fetches wallpapers from a specific folder in a GitHub repository.
+  - Use with: `iris config --remote-source "https://github.com/owner/repo/tree/branch/path/to/wallpapers"`
+  - **TIP**: If you reach rate limits, set your token with `iris config --github-token <your-token>`.
+
+- **Reddit**: Fetches top images from specified subreddits.
+  - Basic: `iris config --remote-source "r/wallpapers"`
+  - Specialized: `iris config --remote-source "r/wallpapers+earthporn"` (combine subreddits)
+  - Advanced: Use sort and time filters:
+    - `r/wallpapers/top?t=day` (Top of the day)
+    - `r/wallpapers/new` (Newest)
+    - `r/wallpapers/hot` (Hot)
 
 When iris is ran for the first time, it automatically configures itself with sensible defaults.
 
@@ -235,7 +253,7 @@ Flags:
       --check-for-updates                  Whether to check for updates of iris from github. (default true)
       --github-token string                The GitHub Personal Access Token (PAT), used to perform authorized requests to fetch wallpapers from GitHub repositories.
   -h, --help                               help for config
-      --remote-source string               Remote source to select wallpapers from. Valid options are: spotlight, github.
+  --remote-source string               Remote source to select wallpapers from. Valid options are: spotlight, github, reddit.
   -s, --save-wallpaper                     Whether to save the wallpaper to the local directory.
   -u, --save-wallpaper-directory string    The local directory to save wallpapers in. (default "C:\\Users\\devsh\\.iris\\wallpapers")
   -q, --search-terms strings               The search terms for spotlight remote wallpapers. (default [nature])

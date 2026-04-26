@@ -68,6 +68,7 @@ func CleanupLogs() {
 	logDir := filepath.Join(GetIrisDir(), "logs")
 	files, err := os.ReadDir(logDir)
 	if err != nil {
+		LogErrorf("cleanup", "unable to read logs dir: %s, error: %v", logDir, err)
 		return
 	}
 
@@ -81,6 +82,7 @@ func CleanupLogs() {
 
 		info, err := file.Info()
 		if err != nil {
+			LogErrorf("cleanup", "unable to get log file info: %s, error: %v", file.Name(), err)
 			continue
 		}
 

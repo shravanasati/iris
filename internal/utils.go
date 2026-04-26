@@ -102,7 +102,24 @@ func downloadImage(url string, temp bool) (string, error) {
 		LogInfof("utils", "using temp directory for download: %s", tempDir)
 	}
 
-	filename := time.Now().Format("02-01-2006 15-04-05" + ".jpg")
+	contentType := res.Header.Get("Content-Type")
+	ext := ".jpg"
+	if strings.Contains(contentType, "image/png") {
+		ext = ".png"
+	} else if strings.Contains(contentType, "image/jpeg") {
+		ext = ".jpg"
+	} else if strings.Contains(contentType, "image/webp") {
+		ext = ".webp"
+	} else {
+		// FALLBACK: try to get extension from URL
+		if strings.Contains(url, ".png") {
+			ext = ".png"
+		} else if strings.Contains(url, ".jpeg") || strings.Contains(url, ".jpg") {
+			ext = ".jpg"
+		}
+	}
+
+	filename := time.Now().Format("02-01-2006 15-04-05") + ext
 	filename = strings.ReplaceAll(filename, " ", "-")
 	filePath := filepath.Join(tempDir, filename)
 	LogInfof("utils", "saving image to: %s", filePath)

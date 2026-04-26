@@ -28,7 +28,8 @@ var (
 	protocolRegex   = regexp.MustCompile(`(?i)(http(s)*:(\/){2})`)
 
 	// matches subreddits like r/sub1, r/sub1+sub2+sub3
-	redditRegex = regexp.MustCompile(`^r/[\w\d_]{3,20}(?:\+[\w\d_]{3,20})*$`)
+	// also supports r/subreddit/top?t=day
+	redditRegex = regexp.MustCompile(`(?i)^r/([\w\d_+]{3,})(/[\w\d]+)?(\?[\w\d=&]+)?$`)
 
 	// matches a remote github folder
 	githubRegex          = regexp.MustCompile(`(?i)^((https:\/\/)*(github\.com))(\/[\w\-_\d% \.\(\)@&]+){2}\/tree(\/.+){1,}(\/){0,1}$`)
@@ -202,6 +203,43 @@ func parseGitHubRepoSource(ghRepoFolderURL string) (githubRepoSource, error) {
 	}, nil
 }
 
+type redditSource struct {
+	subreddit string
+	sort      string // hot, top, new, controversial
+	time      string // day, week, month, year, all
+}
+
+func parseRedditSource(src string) redditSource {
+	matches := redditRegex.FindStringSubmatch(src)
+	if len(matches) < 2 {
+		return redditSource{subreddit: strings.TrimPrefix(src, "r/"), sort: "top", time: "all"}
+	}
+
+	res := redditSource{
+		subreddit: matches[1],
+		sort:      "top",
+		time:      "all",
+	}
+
+	if matches[2] != "" {
+		res.sort = strings.TrimPrefix(matches[2], "/")
+	}
+
+	if matches[3] != "" {
+		u, err := url.ParseQuery(strings.TrimPrefix(matches[3], "?"))
+		if err == nil {
+			if t := u.Get("t"); t != "" {
+				res.time = t
+			}
+			if s := u.Get("sort"); s != "" {
+				res.sort = s
+			}
+		}
+	}
+
+	return res
+}
+
 func (c *Configuration) githubRepoWallpaper() error {
 	repoFolderURL := c.RemoteSource
 	preparedURL, err := getGithubAPIURL(repoFolderURL)
@@ -252,29 +290,68 @@ func (c *Configuration) githubRepoWallpaper() error {
 }
 
 func (c *Configuration) redditWallpaper() error {
-	// todo add support for imgur, ireddit, gallery
 	userAgent := fmt.Sprintf("%v:iris-%v:v0.4.0 (by /u/%v)", runtime.GOOS, _UUID[:6], _UUID[:6])
-	client, err := reddit.NewReadonlyClient(reddit.WithUserAgent(userAgent))
+
+	var client *reddit.Client
+	var err error
+
+	client, err = reddit.NewReadonlyClient(reddit.WithUserAgent(userAgent))
+
 	if err != nil {
 		LogErrorf("wallpapers", "failed to initialize reddit client: %v", err)
 		return err
 	}
-	// todo use reddit token if found
-	subredditName := strings.Replace(strings.ToLower(c.RemoteSource), "r/", "", 1)
-	LogInfof("wallpapers", "fetching top posts from reddit: %s", subredditName)
-	posts, _, err := client.Subreddit.TopPosts(context.Background(), subredditName, &reddit.ListPostOptions{Time: "all"})
-	if err != nil {
-		LogErrorf("wallpapers", "failed to fetch reddit posts for %s: %v", subredditName, err)
-		return err
-	}
-	if len(posts) == 0 {
-		LogWarnf("wallpapers", "no posts found in subreddit: %s", subredditName)
-		return fmt.Errorf("no posts found in subreddit: %s", subredditName)
+
+	parsed := parseRedditSource(c.RemoteSource)
+	LogInfof("wallpapers", "fetching %s posts from reddit: %s (time: %s)", parsed.sort, parsed.subreddit, parsed.time)
+
+	var posts []*reddit.Post
+	opts := &reddit.ListPostOptions{Time: parsed.time}
+
+	switch strings.ToLower(parsed.sort) {
+	case "hot":
+		posts, _, err = client.Subreddit.HotPosts(context.Background(), parsed.subreddit, &reddit.ListOptions{})
+	case "new":
+		posts, _, err = client.Subreddit.NewPosts(context.Background(), parsed.subreddit, &reddit.ListOptions{})
+	case "controversial":
+		posts, _, err = client.Subreddit.ControversialPosts(context.Background(), parsed.subreddit, opts)
+	default:
+		posts, _, err = client.Subreddit.TopPosts(context.Background(), parsed.subreddit, opts)
 	}
 
-	selectedPost := randomChoice(posts)
-	LogInfof("wallpapers", "selected reddit image: %s (from post: %s)", selectedPost.URL, selectedPost.ID)
-	f, err := downloadImage(selectedPost.URL, !c.SaveWallpaper)
+	if err != nil {
+		LogErrorf("wallpapers", "failed to fetch reddit posts for %s: %v", parsed.subreddit, err)
+		return err
+	}
+
+	if len(posts) == 0 {
+		LogWarnf("wallpapers", "no posts found in subreddit: %s", parsed.subreddit)
+		return fmt.Errorf("no posts found in subreddit: %s", parsed.subreddit)
+	}
+
+	// Filter for image posts or galleries
+	var candidates []*reddit.Post
+	for _, p := range posts {
+		// Basic image host check
+		isImgur := strings.Contains(p.URL, "imgur.com")
+		isRedditImage := strings.Contains(p.URL, "i.redd.it")
+		isGallery := strings.Contains(p.URL, "reddit.com/gallery")
+
+		if isImgur || isRedditImage || isGallery {
+			candidates = append(candidates, p)
+		}
+	}
+
+	if len(candidates) == 0 {
+		LogWarnf("wallpapers", "no image/gallery posts found in subreddit: %s", parsed.subreddit)
+		return fmt.Errorf("no image posts found in %s", parsed.subreddit)
+	}
+
+	selectedPost := randomChoice(candidates)
+	targetURL := selectedPost.URL
+
+	LogInfof("wallpapers", "selected reddit image: %s (from post: %s)", targetURL, selectedPost.ID)
+	f, err := downloadImage(targetURL, !c.SaveWallpaper)
 	if err != nil {
 		LogErrorf("wallpapers", "failed to download reddit image: %v", err)
 		return err
@@ -284,8 +361,6 @@ func (c *Configuration) redditWallpaper() error {
 		LogErrorf("wallpapers", "failed to apply reddit wallpaper: %v", err)
 		return err
 	}
-	// todo how to download gallery posts
-	// todo match reddit similar to github, r/wallpapers/top?t=all&limit=50
 
 	return nil
 }
