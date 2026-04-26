@@ -3,12 +3,12 @@ package internal
 import (
 	"encoding/json"
 	"fmt"
+	"golang.org/x/mod/semver"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"time"
-	"golang.org/x/mod/semver"
 )
 
 var lastCheckedFilePath = filepath.Join(GetIrisDir(), "last_checked.update")

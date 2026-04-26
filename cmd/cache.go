@@ -26,7 +26,6 @@ $ iris cache clear
 	},
 }
 
-
 func init() {
 	rootCmd.AddCommand(cacheCmd)
 

@@ -167,7 +167,7 @@ if __name__ == "__main__":
     except CalledProcessError:
         print("==> ⚠  Unable to convert README.md to README.txt using pandoc in distributions, make sure you've pandoc installed on your system.")
 
-    max_procs = cpu_count()
+    max_procs = min(cpu_count(), len(PLATFORMS))
     print(f"==> 🔥 Starting builds with {max_procs} parallel processes.")
 
     with Pool(processes=max_procs) as pool:
